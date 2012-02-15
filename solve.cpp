@@ -13,6 +13,11 @@ assignment_enumeration solve(const capacity_t & capacity, const people_t & peopl
     return assignment_enumeration(capacity, people);
 }
 
+bool flip_coin() {
+    boost::uniform_smallint<> dist(0,1);
+    return dist(random_source);
+}
+
 std::vector<char> random_mask(int m, int n) {
     std::vector<char> mask(n, 0);
     std::fill(mask.begin(), mask.begin()+m, 1);
