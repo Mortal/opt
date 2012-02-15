@@ -9,7 +9,7 @@ opt: opt.o rate.o solve.o
 test: test.o solve.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
-geninput: geninput.o solve.o
+geninput: geninput.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
 %.o: %.cpp
