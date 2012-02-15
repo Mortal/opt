@@ -3,18 +3,10 @@
 #include <string>
 #include <vector>
 
-typedef size_t person_t;
-typedef size_t dest_t;
+#include "types.h"
+#include "rate.h"
 
-// Input types
-typedef std::vector<person_t> priorities_t;
-typedef std::vector<priorities_t> people_t;
-typedef std::vector<size_t> capacity_t;
-
-// Output types
-typedef std::vector<dest_t> assignment_t;
-
-assignment_t solve(const capacity_t & capacity, const people_t & people) {
+static assignment_t solve(const capacity_t & capacity, const people_t & people) {
     capacity_t remaining = capacity;
     assignment_t result(people.size());
     dest_t next = 0;
