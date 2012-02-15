@@ -54,7 +54,13 @@ int main(int argc, char ** argv) {
 	    std::cout << badness << std::endl;
 	    std::cout << "The result is:" << std::endl;
 	    for (person_t p = 0; p < person_count; ++p) {
-		std::cout << p << " -> " << solution[p] << ",  ";
+		std::cout << p << " -> " << solution[p] << ":";
+		for (person_t q = 0; q < people[p].size(); ++q) {
+		    if (solution[p] == solution[people[p][q]]) {
+			std::cout << ' ' << q;
+		    }
+		}
+		std::cout << std::endl;
 	    }
 	    std::cout << std::endl;
 	    since_last = 0;
