@@ -1,4 +1,5 @@
 #include "rate.h"
+#include "solve.h"
 
 // person list.
 typedef std::vector<person_t> personlist_t;

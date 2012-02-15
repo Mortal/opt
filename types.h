@@ -18,10 +18,7 @@ typedef std::vector<priorities_t> people_t;
 // destination -> capacity.
 typedef std::vector<size_t> capacity_t;
 
-// Output types
-
-// person -> destination.
-typedef std::vector<dest_t> assignment_t;
+struct assignment_t;
 
 #endif // __TYPES_H__
 // vim: set sw=4 sts=4 ts=8 noet:
