@@ -52,7 +52,6 @@ struct assignment_t {
     }
 
     inline void swap_dests(dest_t d1, dest_t d2) {
-	std::cout << "Swap " << d1 << " and " << d2 << std::endl;
 	destassignment_t dests = by_dest();
 	if (dests[d1].size() > dests[d2].size()) {
 	    std::swap(d1, d2);
@@ -93,7 +92,7 @@ struct assignment_enumeration {
 	, people(people)
 	, result(capacity, people.size())
     {
-	simple_assignment();
+	shuffle();
     }
 
     inline operator bool() { return has_next; }
@@ -103,14 +102,23 @@ struct assignment_enumeration {
 	return result;
     }
 
-    void simple_assignment() {
+    void simple_assignment(const std::vector<person_t> & order) {
 	dest_t next = 0;
-	for (person_t p = 0; p < people.size(); ++p) {
+	for (person_t p = 0; p < order.size(); ++p) {
 	    while (!result.remaining(next)) {
 		++next;
 	    }
-	    result.set_person(p, next);
+	    result.set_person(order[p], next);
 	}
+    }
+
+    void shuffle() {
+	std::vector<person_t> order(people.size());
+	for (person_t i = 0; i < people.size(); ++i) {
+	    order[i] = i;
+	}
+	::shuffle(order.begin(), order.end());
+	simple_assignment(order);
     }
 
 private:

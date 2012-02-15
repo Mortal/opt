@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-g -Wall -Wextra
+CXXFLAGS=-O3 -Wall -Wextra
 
 all: opt
 
