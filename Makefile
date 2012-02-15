@@ -3,7 +3,7 @@ CXXFLAGS=-g -Wall -Wextra
 
 all: opt
 
-opt: opt.o rate.o
+opt: opt.o rate.o solve.o
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $^
 
 %.o: %.cpp

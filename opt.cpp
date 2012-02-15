@@ -5,20 +5,7 @@
 
 #include "types.h"
 #include "rate.h"
-
-static assignment_t solve(const capacity_t & capacity, const people_t & people) {
-    capacity_t remaining = capacity;
-    assignment_t result(people.size());
-    dest_t next = 0;
-    for (person_t p = 0; p < people.size(); ++p) {
-	while (!remaining[next]) {
-	    ++next;
-	}
-	--remaining[next];
-	result[p] = next;
-    }
-    return result;
-}
+#include "solve.h"
 
 int main(int argc, char ** argv) {
     size_t rooms = 0;
