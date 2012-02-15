@@ -18,6 +18,10 @@ typedef std::vector<priorities_t> people_t;
 // destination -> capacity.
 typedef std::vector<size_t> capacity_t;
 
+// destination -> person list
+typedef std::vector<std::vector<person_t> > destassignment_t;
+
+// person -> destination
 struct assignment_t;
 
 #endif // __TYPES_H__

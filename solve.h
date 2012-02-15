@@ -1,7 +1,12 @@
 #ifndef __SOLVE_H__
 #define __SOLVE_H__
 
+#include <vector>
+
 #include "types.h"
+
+int rand_less_than(int bound);
+std::vector<char> random_mask(int m, int n);
 
 struct assignment_t {
     assignment_t(const capacity_t & capacity, person_t person_count)
@@ -21,12 +26,45 @@ struct assignment_t {
 	return _remaining[d];
     }
 
+    inline destassignment_t by_dest() const {
+	destassignment_t result(capacity.size());
+	for (person_t p = 0; p < person_count; ++p) {
+	    result[by_person[p]].push_back(p);
+	}
+	return result;
+    }
+
     inline void set_person(person_t p, dest_t d) {
 	if (by_person[p] < person_count) {
 	    ++_remaining[by_person[p]];
 	}
 	--_remaining[d];
 	by_person[p] = d;
+    }
+
+    inline void swap_dests(dest_t d1, dest_t d2) {
+	destassignment_t dests = by_dest();
+	if (dests[d1].size() > dests[d2].size()) {
+	    std::swap(d1, d2);
+	} else if (dests[d1].size() == dests[d2].size()) {
+	    for (person_t p = 0; p < dests[d1].size(); ++p) {
+		by_person[dests[d1][p]] = d2;
+	    }
+	    for (person_t p = 0; p < dests[d2].size(); ++p) {
+		by_person[dests[d2][p]] = d1;
+	    }
+	    return;
+	}
+	// dests[d1].size() < dests[d2].size().
+	for (person_t p = 0; p < dests[d1].size(); ++p) {
+	    by_person[dests[d1][p]] = d2;
+	}
+	std::vector<char> mask = random_mask(dests[d1].size(), dests[d2].size());
+	for (person_t p = 0; p < dests[d2].size(); ++p) {
+	    if (mask[p]) {
+		by_person[dests[d2][p]] = d1;
+	    }
+	}
     }
 
 private:
