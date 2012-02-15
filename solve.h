@@ -6,7 +6,16 @@
 #include "types.h"
 
 int rand_less_than(int bound);
+
 std::vector<char> random_mask(int m, int n);
+
+template <typename IT>
+void shuffle(IT begin, IT end) {
+    const int n = end-begin;
+    for (int i = n; i--;) {
+	std::iter_swap(begin+i, begin+rand_less_than(i+1));
+    }
+}
 
 struct assignment_t {
     assignment_t(const capacity_t & capacity, person_t person_count)
@@ -43,6 +52,7 @@ struct assignment_t {
     }
 
     inline void swap_dests(dest_t d1, dest_t d2) {
+	std::cout << "Swap " << d1 << " and " << d2 << std::endl;
 	destassignment_t dests = by_dest();
 	if (dests[d1].size() > dests[d2].size()) {
 	    std::swap(d1, d2);
@@ -80,18 +90,20 @@ private:
 struct assignment_enumeration {
     inline assignment_enumeration(const capacity_t & capacity, const people_t & people) 
 	: capacity(capacity)
-	, people(people) {
-
+	, people(people)
+	, result(capacity, people.size())
+    {
+	simple_assignment();
     }
 
     inline operator bool() { return has_next; }
 
     assignment_t operator()() {
-	return simple_assignment();
+	result.swap_dests(rand_less_than(capacity.size()), rand_less_than(capacity.size()));
+	return result;
     }
 
-    assignment_t simple_assignment() {
-	assignment_t result(capacity, people.size());
+    void simple_assignment() {
 	dest_t next = 0;
 	for (person_t p = 0; p < people.size(); ++p) {
 	    while (!result.remaining(next)) {
@@ -99,12 +111,12 @@ struct assignment_enumeration {
 	    }
 	    result.set_person(p, next);
 	}
-	return result;
     }
 
 private:
     const capacity_t & capacity;
     const people_t & people;
+    assignment_t result;
     bool has_next;
 };
 
