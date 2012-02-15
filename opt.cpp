@@ -45,6 +45,9 @@ int main(int argc, char ** argv) {
     for (person_t p = 0; p < person_count; ++p) {
 	std::cout << p << " -> " << solution[p] << std::endl;
     }
+
+    std::cout << "The badness is:" << std::endl;
+    std::cout << rate(capacity, people, solution) << std::endl;
     return 0;
 }
 

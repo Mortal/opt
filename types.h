@@ -8,11 +8,19 @@ typedef size_t person_t;
 typedef size_t dest_t;
 
 // Input types
+
+// priority -> person.
 typedef std::vector<person_t> priorities_t;
+
+// person -> priority -> person.
 typedef std::vector<priorities_t> people_t;
+
+// destination -> capacity.
 typedef std::vector<size_t> capacity_t;
 
 // Output types
+
+// person -> destination.
 typedef std::vector<dest_t> assignment_t;
 
 #endif // __TYPES_H__
