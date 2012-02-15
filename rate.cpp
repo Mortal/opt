@@ -16,19 +16,22 @@ double rate(const capacity_t & capacity, const people_t & people, const assignme
     double val = 0.0;
     for (person_t p = 0; p < person_count; ++p) {
 	double pval = 0.0;
-	personlist_t & roomies = rooms[assignment[p]];
-	size_t roomie_count = roomies.size();
-	for (person_t q = 0; q < roomie_count; ++q) {
-	    person_t roomie = roomies[q];
-	    if (roomie == p) continue;
-	    size_t priority = 0;
-	    size_t max = people[p].size();
-	    while (priority < max && people[p][priority] != q) {
-		++priority;
+	size_t prio_count = people[p].size();
+	size_t fulfilled = 0;
+	// we wish to add some amount of badness if the 1st priority isn't met.
+	// we wish to add half that amount if the 2nd priority isn't met.
+	// we wish to add half that if the 3rd priority isn't met. etc.
+	// also, the maximum amount of punishment should be equal for all.
+	// sum x*2^-i from 0 to (n-1) = y
+	// 2^(1-n) (-1+2^n) x = y
+	// x = y 2^(n-1) (-1+2^n)^-1
+	double badness = static_cast<double>(1 << (prio_count - 1))/((1 << prio_count) - 1);
+	for (person_t q = 0; q < prio_count; ++q) {
+	    if (assignment[people[p][q]] != assignment[p]) {
+		val += badness;
 	    }
-	    pval += priority*priority;
+	    badness *= 0.5;
 	}
-	val += pval/(1+roomie_count);
     }
     return val;
 }
