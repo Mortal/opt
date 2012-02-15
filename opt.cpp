@@ -39,15 +39,19 @@ int main(int argc, char ** argv) {
     }
     std::cout << "We have " << person_count << " people." << std::endl;
 
-    assignment_t solution = solve(capacity, people);
+    assignment_enumeration solutions = solve(capacity, people);
 
-    std::cout << "The result is:" << std::endl;
-    for (person_t p = 0; p < person_count; ++p) {
-	std::cout << p << " -> " << solution[p] << std::endl;
+    while (solutions) {
+	assignment_t solution = solutions();
+	/*
+	std::cout << "The result is:" << std::endl;
+	for (person_t p = 0; p < person_count; ++p) {
+	    std::cout << p << " -> " << solution[p] << std::endl;
+	}
+	*/
+	std::cout << "The badness is:" << std::endl;
+	std::cout << rate(capacity, people, solution) << std::endl;
     }
-
-    std::cout << "The badness is:" << std::endl;
-    std::cout << rate(capacity, people, solution) << std::endl;
     return 0;
 }
 
