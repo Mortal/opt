@@ -1,2 +1,4 @@
 /opt
 *.o
+*.swp
+test
