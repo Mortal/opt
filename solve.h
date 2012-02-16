@@ -3,10 +3,13 @@
 
 #include <vector>
 #include <memory>
+#include <fstream>
 
 #include "types.h"
 #include "random.h"
 #include "objective.h"
+
+std::ofstream log("log");
 
 struct permuter_t {
     inline permuter_t(const input_t & input) : input(input) {
@@ -22,12 +25,17 @@ struct permuter_t {
     }
     inline void operator()(assignment_t & assignment) {
 	if (p < person_count) {
-	    if (assignment.remaining(d) > 0)
+	    if (assignment.remaining(d) > 0) {
+		//log << "set_person(" << p << ", " << d << ")\n";
 		assignment.set_person(p, d);
-	} else if (p1 < person_count)
+	    }
+	} else if (p1 < person_count) {
+	    //log << "swap_people(" << p1 << ", " << p2 << ")\n";
 	    assignment.swap_people(p1, p2);
-	else
+	} else {
+	    //log << "swap_dests(" << d1 << ", " << d2 << ")\n";
 	    assignment.swap_dests(d1, d2);
+	}
 
 	inc();
     }
@@ -101,6 +109,7 @@ struct solver_t {
     }
 
     void shuffle() {
+	log << "shuffle()\n";
 	std::vector<person_t> order(people.size());
 	for (person_t i = 0; i < people.size(); ++i) {
 	    order[i] = i;
@@ -110,6 +119,7 @@ struct solver_t {
     }
 
     void random_assignment() {
+	log << "random_assignment()\n";
 	std::vector<dest_t> slots(capacity_sum);
 	size_t i = 0;
 	for (dest_t d = 0; d < capacity.size(); ++d) {
@@ -134,6 +144,7 @@ void go() {
 	permuter(*next);
 	double badness = obj(capacity, people, solution);
 	if (!best.get() || badness < best_value) {
+	    log << badness << "\n";
 	    best_value = badness;
 	    best.swap(next);
 	    if (!next.get()) {
