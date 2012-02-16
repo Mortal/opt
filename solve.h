@@ -80,18 +80,21 @@ struct solver_t {
     inline solver_t(const input_t & input, Objective & obj)
 	: input(input)
 	, capacity(input.capacity)
+	, dest_count(capacity.size())
 	, people(input.people)
 	, person_count(people.size())
-	, shuffle_seed(person_count)
+	, dests_in_order(dest_count)
+	, people_in_order(person_count)
 	, solution(input)
 	, capacity_sum(0)
 	, obj(obj)
     {
-	for (dest_t d = 0; d < capacity.size(); ++d) {
+	for (dest_t d = 0; d < dest_count; ++d) {
 	    capacity_sum += capacity[d];
+	    dests_in_order[d] = d;
 	}
-	for (person_t i = 0; i < people.size(); ++i) {
-	    shuffle_seed[i] = i;
+	for (person_t i = 0; i < person_count; ++i) {
+	    people_in_order[i] = i;
 	}
 	random_assignment();
 	//shuffle();
@@ -99,20 +102,22 @@ struct solver_t {
 
     inline operator bool() { return has_next; }
 
-    void simple_assignment(const std::vector<person_t> & order) {
-	dest_t next = 0;
-	for (person_t p = 0; p < order.size(); ++p) {
-	    while (!solution.remaining(next)) {
-		++next;
-	    }
-	    solution.set_person(order[p], next);
-	}
-    }
-
     void shuffle() {
-	std::vector<person_t> order(shuffle_seed);
+	solution.reset();
+	std::vector<dest_t> destorder(dests_in_order);
+	::shuffle(destorder.begin(), destorder.end());
+	std::vector<person_t> order(people_in_order);
 	::shuffle(order.begin(), order.end());
-	simple_assignment(order);
+	dest_t d;
+	person_t p = 0;
+	for (d = 0; d < dest_count; ++d) {
+	    dest_t next = destorder[d];
+	    while (solution.remaining(next)) {
+		solution.set_person(order[p++], next);
+		if (p >= person_count) break;
+	    }
+	    if (p >= person_count) break;
+	}
     }
 
     void random_assignment() {
@@ -167,9 +172,11 @@ void go() {
 private:
     const input_t & input;
     const capacity_t & capacity;
+    dest_t dest_count;
     const people_t & people;
     person_t person_count;
-    std::vector<person_t> shuffle_seed;
+    std::vector<dest_t> dests_in_order;
+    std::vector<person_t> people_in_order;
     assignment_t solution;
     bool has_next;
     size_t capacity_sum;
