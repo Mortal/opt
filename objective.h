@@ -1,5 +1,5 @@
-#ifndef __RATE_H__
-#define __RATE_H__
+#ifndef __OBJECTIVE_H__
+#define __OBJECTIVE_H__
 
 #include "types.h"
 #include "assignment.h"
@@ -39,5 +39,5 @@ double operator()(const capacity_t & capacity, const people_t & people, const as
 }
 };
 
-#endif // __RATE_H__
+#endif // __OBJECTIVE_H__
 // vim: set sw=4 sts=4 ts=8 noet:

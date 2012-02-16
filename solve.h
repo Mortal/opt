@@ -6,7 +6,7 @@
 
 #include "types.h"
 #include "random.h"
-#include "rate.h"
+#include "objective.h"
 
 struct permuter_t {
     inline permuter_t(const input_t & input) : input(input) {

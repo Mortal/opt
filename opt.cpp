@@ -6,7 +6,7 @@
 #include "types.h"
 #include "solve.h"
 #include "io.h"
-#include "rate.h"
+#include "objective.h"
 
 int main() {
     size_t rooms = 0;
