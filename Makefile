@@ -1,10 +1,10 @@
 CXX=g++
 CXXFLAGS=-O3 -Wall -Wextra
 
-all: opt
-
 opt: opt.o random.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
+
+all: opt test geninput
 
 test: test.o random.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
