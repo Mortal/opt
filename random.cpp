@@ -1,11 +1,11 @@
 #include <boost/random.hpp>
 #include "random.h"
 
-boost::mt19937 random_source;
+boost::rand48 random_source;
 
 int rand_less_than(int bound) {
     boost::uniform_int<> dist(0,bound-1);
-    boost::variate_generator<boost::mt19937&, boost::uniform_int<> > rng(random_source, dist);
+    boost::variate_generator<boost::rand48&, boost::uniform_int<> > rng(random_source, dist);
     return rng();
 }
 
