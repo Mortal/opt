@@ -7,12 +7,14 @@
 #include "random.h"
 #include "rate.h"
 
+template <typename Rater>
 struct solver_t {
-    inline solver_t(const input_t & input)
+    inline solver_t(const input_t & input, Rater & rater)
 	: capacity(input.capacity)
 	, people(input.people)
 	, solution(capacity, people.size())
 	, capacity_sum(0)
+	, rater(rater)
     {
 	for (dest_t d = 0; d < capacity.size(); ++d) {
 	    capacity_sum += capacity[d];
@@ -22,10 +24,6 @@ struct solver_t {
     }
 
     inline operator bool() { return has_next; }
-
-    assignment_t get_solution() {
-	return solution;
-    }
 
     void simple_assignment(const std::vector<person_t> & order) {
 	dest_t next = 0;
@@ -65,13 +63,12 @@ void go() {
     bool first = true;
     int since_last = 0;
     const size_t person_count = people.size();
-    while (*this) {
-	assignment_t solution = get_solution();
+    while (true) {
 	if (flip_coin())
 	    solution.swap_dests(rand_less_than(capacity.size()), rand_less_than(capacity.size()));
 	else
 	    solution.swap_people(rand_less_than(people.size()), rand_less_than(people.size()));
-	double badness = rate_geometric()(capacity, people, solution);
+	double badness = rater(capacity, people, solution);
 	if (first || badness < best) {
 	    best = badness;
 	    first = false;
@@ -106,10 +103,12 @@ private:
     assignment_t solution;
     bool has_next;
     size_t capacity_sum;
+    Rater & rater;
 };
 
-inline void solve(const input_t & input) {
-    solver_t solver(input);
+template <typename Rater>
+inline void solve(const input_t & input, Rater & rater) {
+    solver_t<Rater> solver(input, rater);
     solver.go();
 }
 

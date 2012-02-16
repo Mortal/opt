@@ -6,13 +6,15 @@
 #include "types.h"
 #include "solve.h"
 #include "io.h"
+#include "rate.h"
 
 int main() {
     size_t rooms = 0;
     size_t person_count = 0;
     input_t input = get_input(rooms, person_count);
 
-    solve(input);
+    rate_geometric rater;
+    solve(input, rater);
     return 0;
 }
 
