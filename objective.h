@@ -9,6 +9,23 @@ typedef std::vector<person_t> personlist_t;
 // room -> person list.
 typedef std::vector<personlist_t> roomcontents_t;
 
+struct obj_highestpriority {
+double operator()(const capacity_t & /*capacity*/, const people_t & people, const assignment_t & assignment) {
+    size_t person_count = people.size();
+
+    double val = 0.0;
+    for (person_t p = 0; p < person_count; ++p) {
+	person_t prio_count = people[p].size();
+	person_t q;
+	for (q = 0; q < prio_count && q < 5; ++q) {
+	    if (assignment[people[p][q]] == assignment[p]) break;
+	}
+	val += q*q*q;
+    }
+    return val;
+}
+};
+
 struct obj_geometric {
 double operator()(const capacity_t & capacity, const people_t & people, const assignment_t & assignment) {
     size_t person_count = people.size();
