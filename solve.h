@@ -9,7 +9,6 @@
 #include "random.h"
 #include "objective.h"
 
-std::ofstream logfile("logfile");
 
 struct permuter_t {
     inline permuter_t(const input_t & input) : input(input) {
@@ -26,14 +25,11 @@ struct permuter_t {
     inline void operator()(assignment_t & assignment) {
 	if (p < person_count) {
 	    if (assignment.remaining(d) > 0) {
-		//logfile << "set_person(" << p << ", " << d << ")\n";
 		assignment.set_person(p, d);
 	    }
 	} else if (p1 < person_count) {
-	    //logfile << "swap_people(" << p1 << ", " << p2 << ")\n";
 	    assignment.swap_people(p1, p2);
 	} else {
-	    //logfile << "swap_dests(" << d1 << ", " << d2 << ")\n";
 	    assignment.swap_dests(d1, d2);
 	}
 
@@ -85,12 +81,17 @@ struct solver_t {
 	: input(input)
 	, capacity(input.capacity)
 	, people(input.people)
+	, person_count(people.size())
+	, shuffle_seed(person_count)
 	, solution(input)
 	, capacity_sum(0)
 	, obj(obj)
     {
 	for (dest_t d = 0; d < capacity.size(); ++d) {
 	    capacity_sum += capacity[d];
+	}
+	for (person_t i = 0; i < people.size(); ++i) {
+	    shuffle_seed[i] = i;
 	}
 	random_assignment();
 	//shuffle();
@@ -109,17 +110,12 @@ struct solver_t {
     }
 
     void shuffle() {
-	logfile << "shuffle()\n";
-	std::vector<person_t> order(people.size());
-	for (person_t i = 0; i < people.size(); ++i) {
-	    order[i] = i;
-	}
+	std::vector<person_t> order(shuffle_seed);
 	::shuffle(order.begin(), order.end());
 	simple_assignment(order);
     }
 
     void random_assignment() {
-	logfile << "random_assignment()\n";
 	std::vector<dest_t> slots(capacity_sum);
 	size_t i = 0;
 	for (dest_t d = 0; d < capacity.size(); ++d) {
@@ -137,22 +133,20 @@ void go() {
     double best_value = 0.0;
     std::unique_ptr<assignment_t> best;
     std::unique_ptr<assignment_t> next(new assignment_t(solution));
-    int since_last = 0;
     const size_t person_count = people.size();
-    permuter_t permuter(input);
+    size_t since_last = 0;
     while (true) {
-	permuter(*next);
+	shuffle();
+	++since_last;
 	double badness = obj(capacity, people, solution);
 	if (!best.get() || badness < best_value) {
-	    logfile << badness << "\n";
 	    best_value = badness;
 	    best.swap(next);
 	    if (!next.get()) {
 		next.reset(new assignment_t(*best));
-		permuter.reset();
 	    }
 
-	    std::cout << "\n\nThe badness is:" << std::endl;
+	    std::cout << "\n\nAfter " << since_last << " attempts.\nThe badness is:" << std::endl;
 	    std::cout << badness << std::endl;
 	    std::cout << "The result is:" << std::endl;
 	    for (person_t p = 0; p < person_count; ++p) {
@@ -166,16 +160,6 @@ void go() {
 	    }
 	    std::cout << std::endl;
 	    since_last = 0;
-	} else {
-	    ++since_last;
-	    if (permuter.exhausted() || since_last > 500000) {
-		shuffle();
-		*next = solution;
-		permuter.reset();
-		since_last = 0;
-	    } else {
-		*next = *best;
-	    }
 	}
     }
 }
@@ -184,6 +168,8 @@ private:
     const input_t & input;
     const capacity_t & capacity;
     const people_t & people;
+    person_t person_count;
+    std::vector<person_t> shuffle_seed;
     assignment_t solution;
     bool has_next;
     size_t capacity_sum;
