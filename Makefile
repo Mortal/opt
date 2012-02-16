@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-O3 -Wall -Wextra
+CXXFLAGS=-O3 -Wall -Wextra --std=gnu++0x
 
 opt: opt.o random.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^

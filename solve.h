@@ -2,6 +2,7 @@
 #define __SOLVE_H__
 
 #include <vector>
+#include <memory>
 
 #include "types.h"
 #include "random.h"
@@ -77,17 +78,20 @@ struct solver_t {
     }
 
 void go() {
-    double best = 0.0;
-    bool first = true;
+    double best_value = 0.0;
+    std::unique_ptr<assignment_t> best;
+    std::unique_ptr<assignment_t> next(new assignment_t(solution));
     int since_last = 0;
     const size_t person_count = people.size();
     permuter_t permuter(input);
     while (true) {
-	permuter(solution);
+	permuter(*next);
 	double badness = rater(capacity, people, solution);
-	if (first || badness < best) {
-	    best = badness;
-	    first = false;
+	if (!best.get() || badness < best_value) {
+	    best_value = badness;
+	    best.swap(next);
+	    if (!next.get()) next.reset(new assignment_t(*best));
+
 	    std::cout << "\n\nThe badness is:" << std::endl;
 	    std::cout << badness << std::endl;
 	    std::cout << "The result is:" << std::endl;
@@ -107,7 +111,10 @@ void go() {
 	    if (since_last > 500000) {
 		std::cout << '.' << std::flush;
 		shuffle();
+		*next = solution;
 		since_last = 0;
+	    } else {
+		*next = *best;
 	    }
 	}
     }
