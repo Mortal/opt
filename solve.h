@@ -8,9 +8,9 @@
 #include "rate.h"
 
 struct solver_t {
-    inline solver_t(const capacity_t & capacity, const people_t & people) 
-	: capacity(capacity)
-	, people(people)
+    inline solver_t(const input_t & input)
+	: capacity(input.capacity)
+	, people(input.people)
 	, result(capacity, people.size())
 	, capacity_sum(0)
     {
@@ -109,9 +109,7 @@ private:
 };
 
 inline void solve(const input_t & input) {
-    const capacity_t & capacity = input.capacity;
-    const people_t & people = input.people;
-    solver_t solver(capacity, people);
+    solver_t solver(input);
     solver.go();
 }
 
