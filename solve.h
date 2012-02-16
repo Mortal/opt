@@ -18,10 +18,13 @@ struct permuter_t {
 	return _exhausted;
     }
     inline void reset() {
-	seed = p1 = p2 = d1 = d2 = 0;
+	seed = p1 = p2 = d1 = d2 = p = d = 0;
     }
     inline void operator()(assignment_t & assignment) {
-	if (p1 < person_count)
+	if (p < person_count) {
+	    if (assignment.remaining(d) > 0)
+		assignment.set_person(p, d);
+	} else if (p1 < person_count)
 	    assignment.swap_people(p1, p2);
 	else
 	    assignment.swap_dests(d1, d2);
@@ -36,10 +39,19 @@ private:
     size_t seed;
     person_t p1, p2;
     dest_t d1, d2;
+    person_t p;
+    dest_t d;
     bool _exhausted;
 
     inline void inc() {
-	if (p1 < person_count) {
+	if (p < person_count) {
+	    if (d < dest_count) {
+		++d;
+	    } else {
+		++p;
+		d = 0;
+	    }
+	} if (p1 < person_count) {
 	    if (p2 < person_count) {
 		++p2;
 	    } else {
