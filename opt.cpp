@@ -46,7 +46,7 @@ int main(int argc, char ** argv) {
     int since_last = 0;
     while (solutions) {
 	assignment_t solution = solutions();
-	double badness = rate(capacity, people, solution);
+	double badness = rate_geometric()(capacity, people, solution);
 	if (first || badness < best) {
 	    best = badness;
 	    first = false;

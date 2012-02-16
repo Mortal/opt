@@ -9,7 +9,8 @@ typedef std::vector<person_t> personlist_t;
 // room -> person list.
 typedef std::vector<personlist_t> roomcontents_t;
 
-double rate(const capacity_t & capacity, const people_t & people, const assignment_t & assignment) {
+struct rate_geometric {
+double operator()(const capacity_t & capacity, const people_t & people, const assignment_t & assignment) {
     size_t person_count = people.size();
     roomcontents_t rooms(capacity.size());
     for (person_t p = 0; p < person_count; ++p) {
@@ -38,6 +39,7 @@ double rate(const capacity_t & capacity, const people_t & people, const assignme
     }
     return val;
 }
+};
 
 #endif // __RATE_H__
 // vim: set sw=4 sts=4 ts=8 noet:
