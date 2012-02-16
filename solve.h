@@ -12,17 +12,51 @@ struct permuter_t {
     inline permuter_t(const input_t & input) : input(input) {
 	dest_count = input.capacity.size();
 	person_count = input.people.size();
+	reset();
+    }
+    inline bool exhausted() const {
+	return _exhausted;
+    }
+    inline void reset() {
+	seed = p1 = p2 = d1 = d2 = 0;
     }
     inline void operator()(assignment_t & assignment) {
-	if (flip_coin())
-	    assignment.swap_dests(rand_less_than(dest_count), rand_less_than(dest_count));
+	if (p1 < person_count)
+	    assignment.swap_people(p1, p2);
 	else
-	    assignment.swap_people(rand_less_than(person_count), rand_less_than(person_count));
+	    assignment.swap_dests(d1, d2);
+
+	inc();
     }
+
 private:
     const input_t & input;
-    size_t dest_count;
-    size_t person_count;
+    dest_t dest_count;
+    person_t person_count;
+    size_t seed;
+    person_t p1, p2;
+    dest_t d1, d2;
+    bool _exhausted;
+
+    inline void inc() {
+	if (p1 < person_count) {
+	    if (p2 < person_count) {
+		++p2;
+	    } else {
+		++p1;
+		p2 = 0;
+	    }
+	} else if (d1 < dest_count) {
+	    if (d2 < dest_count) {
+		++d2;
+	    } else {
+		++d1;
+		d2 = 0;
+	    }
+	} else {
+	    _exhausted = true;
+	}
+    }
 };
 
 template <typename Objective>
@@ -90,7 +124,10 @@ void go() {
 	if (!best.get() || badness < best_value) {
 	    best_value = badness;
 	    best.swap(next);
-	    if (!next.get()) next.reset(new assignment_t(*best));
+	    if (!next.get()) {
+		next.reset(new assignment_t(*best));
+		permuter.reset();
+	    }
 
 	    std::cout << "\n\nThe badness is:" << std::endl;
 	    std::cout << badness << std::endl;
@@ -108,10 +145,10 @@ void go() {
 	    since_last = 0;
 	} else {
 	    ++since_last;
-	    if (since_last > 500000) {
-		std::cout << '.' << std::flush;
+	    if (permuter.exhausted() || since_last > 500000) {
 		shuffle();
 		*next = solution;
+		permuter.reset();
 		since_last = 0;
 	    } else {
 		*next = *best;
