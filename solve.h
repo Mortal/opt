@@ -7,8 +7,8 @@
 #include "random.h"
 #include "rate.h"
 
-struct assignment_enumeration {
-    inline assignment_enumeration(const capacity_t & capacity, const people_t & people) 
+struct solver_t {
+    inline solver_t(const capacity_t & capacity, const people_t & people) 
 	: capacity(capacity)
 	, people(people)
 	, result(capacity, people.size())
@@ -111,8 +111,8 @@ private:
 inline void solve(const input_t & input) {
     const capacity_t & capacity = input.capacity;
     const people_t & people = input.people;
-    assignment_enumeration ae(capacity, people);
-    ae.go();
+    solver_t solver(capacity, people);
+    solver.go();
 }
 
 #endif // __SOLVE_H__
