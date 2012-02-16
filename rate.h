@@ -19,9 +19,7 @@ double operator()(const capacity_t & capacity, const people_t & people, const as
 
     double val = 0.0;
     for (person_t p = 0; p < person_count; ++p) {
-	double pval = 0.0;
 	size_t prio_count = people[p].size();
-	size_t fulfilled = 0;
 	// we wish to add some amount of badness if the 1st priority isn't met.
 	// we wish to add half that amount if the 2nd priority isn't met.
 	// we wish to add half that if the 3rd priority isn't met. etc.

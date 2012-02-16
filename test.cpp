@@ -18,7 +18,7 @@ void test_mask() {
     }
 }
 
-int main(int argc, char ** argv) {
+int main() {
     test_mask();
     return 0;
 }

@@ -7,7 +7,7 @@
 #include "rate.h"
 #include "solve.h"
 
-int main(int argc, char ** argv) {
+int main() {
     size_t rooms = 0;
     std::cout << "Hit me with capacities!" << std::endl;
     capacity_t capacity;

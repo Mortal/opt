@@ -24,7 +24,7 @@ void print_priorities() {
     std::cout << std::flush;
 }
 
-int main(int argc, char ** argv) {
+int main() {
     print_destinations();
     print_priorities();
     return 0;
