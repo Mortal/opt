@@ -6,38 +6,14 @@
 #include "types.h"
 #include "rate.h"
 #include "solve.h"
+#include "io.h"
 
 int main() {
     size_t rooms = 0;
-    std::cout << "Hit me with capacities!" << std::endl;
-    capacity_t capacity;
-    {
-	std::string s;
-	if (!getline(std::cin, s)) return 0;
-	std::stringstream tokens(s);
-	size_t p;
-	while (tokens >> p) {
-	    capacity.push_back(p);
-	    ++rooms;
-	}
-    }
-    std::cout << "We have " << rooms << " rooms.\n"
-	<< "Hit me with priorities!\n" << std::endl;
     size_t person_count = 0;
-    people_t people;
-    while (true) {
-	std::string s;
-	if (!getline(std::cin, s)) break;
-	std::stringstream tokens(s);
-	priorities_t prio;
-	person_t p;
-	while (tokens >> p) {
-	    prio.push_back(p);
-	}
-	people.push_back(prio);
-	++person_count;
-    }
-    std::cout << "We have " << person_count << " people." << std::endl;
+    input_t input = get_input(rooms, person_count);
+    capacity_t & capacity = input.capacity;
+    people_t & people = input.people;
 
     assignment_enumeration solutions = solve(capacity, people);
 

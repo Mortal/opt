@@ -24,5 +24,10 @@ typedef std::vector<std::vector<person_t> > destassignment_t;
 // person -> destination
 struct assignment_t;
 
+struct input_t {
+    capacity_t capacity;
+    people_t people;
+};
+
 #endif // __TYPES_H__
 // vim: set sw=4 sts=4 ts=8 noet:
