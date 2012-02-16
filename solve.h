@@ -7,10 +7,28 @@
 #include "random.h"
 #include "rate.h"
 
+struct permuter_t {
+    inline permuter_t(const input_t & input) : input(input) {
+	dest_count = input.capacity.size();
+	person_count = input.people.size();
+    }
+    inline void operator()(assignment_t & assignment) {
+	if (flip_coin())
+	    assignment.swap_dests(rand_less_than(dest_count), rand_less_than(dest_count));
+	else
+	    assignment.swap_people(rand_less_than(person_count), rand_less_than(person_count));
+    }
+private:
+    const input_t & input;
+    size_t dest_count;
+    size_t person_count;
+};
+
 template <typename Rater>
 struct solver_t {
     inline solver_t(const input_t & input, Rater & rater)
-	: capacity(input.capacity)
+	: input(input)
+	, capacity(input.capacity)
 	, people(input.people)
 	, solution(capacity, people.size())
 	, capacity_sum(0)
@@ -63,11 +81,9 @@ void go() {
     bool first = true;
     int since_last = 0;
     const size_t person_count = people.size();
+    permuter_t permuter(input);
     while (true) {
-	if (flip_coin())
-	    solution.swap_dests(rand_less_than(capacity.size()), rand_less_than(capacity.size()));
-	else
-	    solution.swap_people(rand_less_than(people.size()), rand_less_than(people.size()));
+	permuter(solution);
 	double badness = rater(capacity, people, solution);
 	if (first || badness < best) {
 	    best = badness;
@@ -98,6 +114,7 @@ void go() {
 }
 
 private:
+    const input_t & input;
     const capacity_t & capacity;
     const people_t & people;
     assignment_t solution;
