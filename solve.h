@@ -30,7 +30,7 @@ struct solver_t {
 	: input(input)
 	, capacity(input.capacity)
 	, people(input.people)
-	, solution(capacity, people.size())
+	, solution(input)
 	, capacity_sum(0)
 	, rater(rater)
     {

@@ -5,10 +5,10 @@
 
 // person -> destination
 struct assignment_t {
-    assignment_t(const capacity_t & capacity, person_t person_count)
-	: capacity(capacity)
-	, _remaining(capacity)
-	, person_count(person_count)
+    assignment_t(const input_t & input)
+	: _remaining(input.capacity)
+	, dest_count(input.capacity.size())
+	, person_count(input.people.size())
 	, by_person(person_count, person_count)
     {
 
@@ -23,7 +23,7 @@ struct assignment_t {
     }
 
     inline destassignment_t by_dest() const {
-	destassignment_t result(capacity.size());
+	destassignment_t result(dest_count);
 	for (person_t p = 0; p < person_count; ++p) {
 	    result[by_person[p]].push_back(p);
 	}
@@ -70,10 +70,9 @@ struct assignment_t {
     }
 
 private:
-    const capacity_t & capacity;
     capacity_t _remaining;
-
-    size_t person_count;
+    dest_t dest_count;
+    person_t person_count;
 
     // person -> destination.
     std::vector<dest_t> by_person;
