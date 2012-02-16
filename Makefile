@@ -3,10 +3,10 @@ CXXFLAGS=-O3 -Wall -Wextra
 
 all: opt
 
-opt: opt.o rate.o solve.o
+opt: opt.o random.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
-test: test.o solve.o
+test: test.o random.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
 geninput: geninput.o
@@ -24,4 +24,4 @@ solve.o: solve.cpp solve.h types.h
 test.o: test.cpp solve.h types.h
 
 clean:
-	$(RM) opt opt.o rate.o solve.o
+	$(RM) opt test geninput opt.o random.o test.o geninput.o

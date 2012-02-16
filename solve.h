@@ -4,20 +4,7 @@
 #include <vector>
 
 #include "types.h"
-
-int rand_less_than(int bound);
-
-std::vector<char> random_mask(int m, int n);
-
-bool flip_coin();
-
-template <typename IT>
-void shuffle(IT begin, IT end) {
-    const int n = end-begin;
-    for (int i = n; i--;) {
-	std::iter_swap(begin+i, begin+rand_less_than(i+1));
-    }
-}
+#include "random.h"
 
 struct assignment_t {
     assignment_t(const capacity_t & capacity, person_t person_count)
@@ -159,7 +146,9 @@ private:
     size_t capacity_sum;
 };
 
-assignment_enumeration solve(const capacity_t & capacity, const people_t & people);
+inline assignment_enumeration solve(const capacity_t & capacity, const people_t & people) {
+    return assignment_enumeration(capacity, people);
+}
 
 #endif // __SOLVE_H__
 // vim: set sw=4 sts=4 ts=8 noet:

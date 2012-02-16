@@ -1,5 +1,5 @@
 #include <boost/random.hpp>
-#include "solve.h"
+#include "random.h"
 
 boost::mt19937 random_source;
 
@@ -7,10 +7,6 @@ int rand_less_than(int bound) {
     boost::uniform_int<> dist(0,bound-1);
     boost::variate_generator<boost::mt19937&, boost::uniform_int<> > rng(random_source, dist);
     return rng();
-}
-
-assignment_enumeration solve(const capacity_t & capacity, const people_t & people) {
-    return assignment_enumeration(capacity, people);
 }
 
 bool flip_coin() {
