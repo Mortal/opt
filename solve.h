@@ -11,7 +11,7 @@ struct solver_t {
     inline solver_t(const input_t & input)
 	: capacity(input.capacity)
 	, people(input.people)
-	, result(capacity, people.size())
+	, solution(capacity, people.size())
 	, capacity_sum(0)
     {
 	for (dest_t d = 0; d < capacity.size(); ++d) {
@@ -24,20 +24,16 @@ struct solver_t {
     inline operator bool() { return has_next; }
 
     assignment_t get_solution() {
-	if (flip_coin())
-	    result.swap_dests(rand_less_than(capacity.size()), rand_less_than(capacity.size()));
-	else
-	    result.swap_people(rand_less_than(people.size()), rand_less_than(people.size()));
-	return result;
+	return solution;
     }
 
     void simple_assignment(const std::vector<person_t> & order) {
 	dest_t next = 0;
 	for (person_t p = 0; p < order.size(); ++p) {
-	    while (!result.remaining(next)) {
+	    while (!solution.remaining(next)) {
 		++next;
 	    }
-	    result.set_person(order[p], next);
+	    solution.set_person(order[p], next);
 	}
     }
 
@@ -60,7 +56,7 @@ struct solver_t {
 	}
 	::shuffle(slots.begin(), slots.end());
 	for (person_t p = 0; p < people.size(); ++p) {
-	    result.set_person(p, slots[p]);
+	    solution.set_person(p, slots[p]);
 	}
     }
 
@@ -71,6 +67,10 @@ void go() {
     const size_t person_count = people.size();
     while (*this) {
 	assignment_t solution = get_solution();
+	if (flip_coin())
+	    solution.swap_dests(rand_less_than(capacity.size()), rand_less_than(capacity.size()));
+	else
+	    solution.swap_people(rand_less_than(people.size()), rand_less_than(people.size()));
 	double badness = rate_geometric()(capacity, people, solution);
 	if (first || badness < best) {
 	    best = badness;
@@ -103,7 +103,7 @@ void go() {
 private:
     const capacity_t & capacity;
     const people_t & people;
-    assignment_t result;
+    assignment_t solution;
     bool has_next;
     size_t capacity_sum;
 };
