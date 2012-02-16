@@ -2,7 +2,7 @@
 #define __RATE_H__
 
 #include "types.h"
-#include "solve.h"
+#include "assignment.h"
 
 // person list.
 typedef std::vector<person_t> personlist_t;
