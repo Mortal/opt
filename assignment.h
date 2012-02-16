@@ -6,12 +6,18 @@
 // person -> destination
 struct assignment_t {
     assignment_t(const input_t & input)
-	: _remaining(input.capacity)
+	: input(input)
+	, _remaining(input.capacity)
 	, dest_count(input.capacity.size())
 	, person_count(input.people.size())
 	, by_person(person_count, person_count)
     {
 
+    }
+
+    inline void reset() {
+	std::fill(by_person.begin(), by_person.end(), person_count);
+	_remaining = input.capacity;
     }
 
     inline dest_t operator[](person_t i) const {
@@ -70,6 +76,7 @@ struct assignment_t {
     }
 
 private:
+    const input_t & input;
     capacity_t _remaining;
     dest_t dest_count;
     person_t person_count;
@@ -79,3 +86,4 @@ private:
 };
 
 #endif // __ASSIGNMENT_H__
+// vim: set sw=4 sts=4 ts=8 noet:
