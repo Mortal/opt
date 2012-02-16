@@ -13,8 +13,8 @@ int main() {
     size_t person_count = 0;
     input_t input = get_input(rooms, person_count);
 
-    rate_geometric rater;
-    solve(input, rater);
+    obj_geometric objective;
+    solve(input, objective);
     return 0;
 }
 

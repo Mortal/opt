@@ -25,15 +25,15 @@ private:
     size_t person_count;
 };
 
-template <typename Rater>
+template <typename Objective>
 struct solver_t {
-    inline solver_t(const input_t & input, Rater & rater)
+    inline solver_t(const input_t & input, Objective & obj)
 	: input(input)
 	, capacity(input.capacity)
 	, people(input.people)
 	, solution(input)
 	, capacity_sum(0)
-	, rater(rater)
+	, obj(obj)
     {
 	for (dest_t d = 0; d < capacity.size(); ++d) {
 	    capacity_sum += capacity[d];
@@ -86,7 +86,7 @@ void go() {
     permuter_t permuter(input);
     while (true) {
 	permuter(*next);
-	double badness = rater(capacity, people, solution);
+	double badness = obj(capacity, people, solution);
 	if (!best.get() || badness < best_value) {
 	    best_value = badness;
 	    best.swap(next);
@@ -127,12 +127,12 @@ private:
     assignment_t solution;
     bool has_next;
     size_t capacity_sum;
-    Rater & rater;
+    Objective & obj;
 };
 
-template <typename Rater>
-inline void solve(const input_t & input, Rater & rater) {
-    solver_t<Rater> solver(input, rater);
+template <typename Objective>
+inline void solve(const input_t & input, Objective & obj) {
+    solver_t<Objective> solver(input, obj);
     solver.go();
 }
 

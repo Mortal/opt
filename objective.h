@@ -9,7 +9,7 @@ typedef std::vector<person_t> personlist_t;
 // room -> person list.
 typedef std::vector<personlist_t> roomcontents_t;
 
-struct rate_geometric {
+struct obj_geometric {
 double operator()(const capacity_t & capacity, const people_t & people, const assignment_t & assignment) {
     size_t person_count = people.size();
     roomcontents_t rooms(capacity.size());
