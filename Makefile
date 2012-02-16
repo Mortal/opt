@@ -15,13 +15,13 @@ geninput: geninput.o
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-opt.o: opt.cpp types.h rate.h solve.h
+opt.o: opt.cpp types.h rate.h solve.h io.h assignment.h
 
-rate.o: rate.cpp rate.h types.h
+geninput.o: geninput.cpp
 
-solve.o: solve.cpp solve.h types.h
+random.o: random.cpp random.h
 
-test.o: test.cpp solve.h types.h
+test.o: test.cpp solve.h types.h random.h rate.h assignment.h
 
 clean:
 	$(RM) opt test geninput opt.o random.o test.o geninput.o
