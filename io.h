@@ -8,8 +8,9 @@ inline input_t get_input(size_t & rooms, size_t & person_count) {
     input_t result;
     capacity_t & capacity = result.capacity;
     people_t & people = result.people;
+    condition_t & condition = result.condition;
 
-    std::cout << "Hit me with capacities!" << std::endl;
+    // Read capacities
     {
 	std::string s;
 	if (!getline(std::cin, s)) exit(0);
@@ -20,21 +21,33 @@ inline input_t get_input(size_t & rooms, size_t & person_count) {
 	    ++rooms;
 	}
     }
-    std::cout << "We have " << rooms << " rooms.\n"
-	<< "Hit me with priorities!\n" << std::endl;
+    {
+	condition.resize(2);
+	condition[0].resize(capacity.size(), false);
+	condition[1] = condition[0];
+	for (dest_t d = 0; d < capacity.size(); ++d) {
+	    if (d < capacity.size()/2) condition[0][d] = true;
+	    if (d % 2) condition[1][d] = true;
+	}
+    }
+    // Read priorities
     while (true) {
 	std::string s;
 	if (!getline(std::cin, s)) break;
 	std::stringstream tokens(s);
 	priorities_t prio;
+
+	tokens >> prio.wp >> prio.w1 >> prio.w2 >> prio.c1 >> prio.c2;
+
+	roomies_t & roomies = prio.roomies;
 	person_t p;
 	while (tokens >> p) {
-	    prio.push_back(p);
+	    roomies.insert(p);
 	}
+
 	people.push_back(prio);
 	++person_count;
     }
-    std::cout << "We have " << person_count << " people." << std::endl;
 
     return result;
 }

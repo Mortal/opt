@@ -13,7 +13,7 @@ int main() {
     size_t person_count = 0;
     input_t input = get_input(rooms, person_count);
 
-    obj_highestpriority objective;
+    obj_goodness objective;
     solve(input, objective);
     return 0;
 }
