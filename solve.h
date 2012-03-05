@@ -199,12 +199,17 @@ struct cout_reporter {
 	    std::cout << "\n\n";
 	    std::cout << t.format();
 	    std::cout << "After " << attempts << " attempts in total." << std::endl;
-	    std::cout << "Beboer & Gang & g_p & g_s & g_e & v_p & v_s & v_e & G & Ønskede roomies \\\\" << std::endl;
+	    std::cout << "Beboer & Gang & g_p & g_s & g_e & v_p & v_s & v_e &  G & Ønskede roomies \\\\" << std::endl;
 	    for (person_t p = 0; p < person_count; ++p) {
 		const priorities_t & prio = people[p];
 		dest_t dest = solution[p];
 		const roomies_t & wished_roomies = prio.roomies;
-		std::cout << std::setw(6) << p << " &" << std::setw(5) << dest << " &";
+		std::cout << std::setw(6) << p << " &";
+		if (dest%4)
+		    std::cout << std::setw(2) << (4+dest/4) << '-' << dest%4 << ' ';
+		else
+		    std::cout << std::setw(2) << (4+dest/4) << '-' << "St";
+		std::cout << " &";
 		weight_t val = 0;
 		if (prio.w1 && condition[0][dest]) val += prio.w1;
 		if (prio.w2 && condition[1][dest]) val += prio.w2;
