@@ -4,10 +4,52 @@
 \usepackage{amsmath,amssymb}
 \usepackage[final]{microtype}
 \usepackage[danish]{babel}
+\usepackage{enumitem}
 \newsubfloat{figure}
 \pagestyle{chapter}
 \begin{document}
-\chapter*{Optimering efter prioriteter}
+\begin{centering}
+{\LARGE Genhusningsudvalget}
+
+\vspace{1em} {\large
+Hans Henrik Juhl
+
+Helene Aagaard
+
+Martin Christensen
+
+Mathias Rav
+
+My Maya Tvarnø
+
+}
+\end{centering}
+
+\chapter{Optimering efter prioriteter}
+
+\section{Fordele og ulemper}
+\begin{minipage}[t]{0.45\linewidth}
+\small
+\subsection{Fordele}
+\begin{itemize}[leftmargin=0ex]
+\item[] Tilstræbt minimeret tilfældighed
+\item[] Maksimering af medbestemmelse
+\item[] Tilgodeser individets ønsker
+\item[] Internetbaseret; kræver ikke fysisk gangmøde
+\end{itemize}
+\end{minipage}
+\hspace{0.1\linewidth}
+\begin{minipage}[t]{0.45\linewidth}
+\small
+\subsection{Ulemper}
+\begin{itemize}[leftmargin=0ex]
+\item[] Tilfældighed
+\item[] Nogle folk får ikke deres vilje
+\item[] Tager lang tid
+\end{itemize}
+\end{minipage}
+
+\section{Model}
 
 En beboer, der skal omhuses, kan give op til tre ønsker. For det første kan man
 ønske, hvem man vil bo på samme gang med. Man kan i den sammenhæng kun ønske
@@ -33,8 +75,8 @@ Personer: & 123 \\
 vægt: 8 & 213 \\
 & 321 \\
 \midrule
-Side: & $\text{\rlap{$\checkmark$}}\square$ Langelandsgade \\
-vægt: 4 & $\square$ Nørrebrogade \\
+Side: & $\text{\rlap{$\checkmark$}}\square$ Kollegium 4-5-6 \\
+vægt: 4 & $\square$ Kollegium 7-8-9 \\
 \midrule
 Højde: & $\square$ Stue \\
 vægt: 0 & $\square$ Ikke stue \\
@@ -43,17 +85,29 @@ vægt: 0 & $\square$ Ikke stue \\
 
 \vspace{1em}
 \begin{minipage}[t]{0.6\textwidth}
-\caption{En beboers ønsker. Beboeren er lige glad med stue/ikke stue, så denne har fået vægt 0, og ingen af ønskerne er markeret.}
+\caption{En beboers ønsker. Beboeren er lige glad med stue/ikke stue, så denne
+har fået vægt 0, og ingen af ønskerne er markeret.}
 \end{minipage}
 \end{center}
 \end{figure}
 
+\section{Praksis}
+
+Beboerne, der skal omhuses, kan hver få tildelt en personlig adgangskode, som
+de kan bruge til at logge ind på en hjemmeside, hvor ønskerne kan indtastes og
+ændres. Ønskerne kan gemmes i en database, hvorfra vi kan hente inputdata til
+programmet, der beregner løsningen. Folk skal have omtrent en uge til at taste
+ønsker ind, og vi bruger formodentlig et par dage på at vente på at løsningen
+beregnes.
+
+\section{Beregning}
+
 Vi skal nu finde ud af, hvordan én tildeling af beboere til gange er bedre end
-en anden. Det gør vi ved at indføre begrebet godhed, som er et kommatal der
-angiver hvor god en tildeling er. Den værste godhed, en tildeling kan have, er
-$0.0$, hvis ingen beboere har fået det, som de vil have det. Den bedste godhed er
-lig antallet af beboere, der skal omhuses, ganget med 12 (hvis $51$ skal
-omhuses er den bedste godhed $612$).
+en anden. Det gør vi ved at indføre begrebet \emph{godhed}, som er et kommatal
+der angiver hvor god en tildeling er. Den værste godhed, en tildeling kan have,
+er $0.0$, hvis ingen beboere har fået det, som de vil have det. Den bedste
+godhed er lig antallet af beboere, der skal omhuses, ganget med 12 (hvis $51$
+skal omhuses er den bedste godhed $612$).
 
 For at beregne godhed skriver vi først op for hver beboer deres værelsesnummer
 samt hvilken gang de får lov at bo på. Ved hver beboer skriver vi så på linjen,
