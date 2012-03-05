@@ -87,7 +87,7 @@ struct solver_t {
 	, person_count(people.size())
 	, dests_in_order(dest_count)
 	, people_in_order(person_count)
-	, solution(input)
+	, solution(rand, input)
 	, capacity_sum(0)
 	, obj(obj)
 	, rep(rep)
@@ -108,9 +108,9 @@ struct solver_t {
     void shuffle() {
 	solution.reset();
 	std::vector<dest_t> destorder(dests_in_order);
-	::shuffle(destorder.begin(), destorder.end());
+	rand.shuffle(destorder.begin(), destorder.end());
 	std::vector<person_t> order(people_in_order);
-	::shuffle(order.begin(), order.end());
+	rand.shuffle(order.begin(), order.end());
 	dest_t d;
 	person_t p = 0;
 	for (d = 0; d < dest_count; ++d) {
@@ -131,7 +131,7 @@ struct solver_t {
 		slots[i] = d;
 	    }
 	}
-	::shuffle(slots.begin(), slots.end());
+	rand.shuffle(slots.begin(), slots.end());
 	for (person_t p = 0; p < people.size(); ++p) {
 	    solution.set_person(p, slots[p]);
 	}
@@ -166,6 +166,7 @@ private:
     person_t person_count;
     std::vector<dest_t> dests_in_order;
     std::vector<person_t> people_in_order;
+    randutil rand;
     assignment_t solution;
     bool has_next;
     size_t capacity_sum;

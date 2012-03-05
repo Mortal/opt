@@ -1,6 +1,15 @@
 CXX=g++
-CXXFLAGS=-O3 -Wall -Wextra --std=gnu++0x
-LDFLAGS=-lboost_system -lboost_timer
+ifeq ($(DEBUG),)
+	CXXFLAGS=-O3
+else
+	ifeq ($(PROFILE),)
+		CXXFLAGS=-ggdb -DDEBUG
+	else
+		CXXFLAGS=-pg
+	endif
+endif
+CXXFLAGS+=-Wall -Wextra --std=gnu++0x
+LDFLAGS=-lboost_system -lboost_timer -lboost_thread
 
 opt: opt.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^

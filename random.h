@@ -4,11 +4,9 @@
 #include <vector>
 #include <boost/random.hpp>
 
-int rand_less_than(int bound);
+struct randutil {
 
-std::vector<char> random_mask(int m, int n);
-
-bool flip_coin();
+boost::mt19937 random_source;
 
 template <typename IT>
 void shuffle(IT begin, IT end) {
@@ -46,8 +44,6 @@ private:
     size_t index;
 };
 
-boost::mt19937 random_source;
-
 int rand_less_than(int bound) {
     boost::uniform_smallint<> dist(0,bound-1);
     boost::variate_generator<boost::mt19937&, boost::uniform_smallint<> > rng(random_source, dist);
@@ -65,6 +61,8 @@ std::vector<char> random_mask(int m, int n) {
     shuffle(mask.begin(), mask.end());
     return mask;
 }
+
+};
 
 #endif // __RANDOM_H__
 // vim: set sw=4 sts=4 ts=8 noet:

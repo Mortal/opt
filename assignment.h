@@ -5,12 +5,13 @@
 
 // person -> destination
 struct assignment_t {
-    assignment_t(const input_t & input)
+    assignment_t(randutil & rand, const input_t & input)
 	: input(input)
 	, _remaining(input.capacity)
 	, dest_count(input.capacity.size())
 	, person_count(input.people.size())
 	, by_person(person_count, person_count)
+	, rand(rand)
     {
 
     }
@@ -61,7 +62,7 @@ struct assignment_t {
 	for (person_t p = 0; p < dests[d1].size(); ++p) {
 	    set_person(dests[d1][p], d2);
 	}
-	std::vector<char> mask = random_mask(dests[d1].size(), dests[d2].size());
+	std::vector<char> mask = rand.random_mask(dests[d1].size(), dests[d2].size());
 	for (person_t p = 0; p < dests[d2].size(); ++p) {
 	    if (mask[p]) {
 		set_person(dests[d2][p], d1);
@@ -83,6 +84,8 @@ private:
 
     // person -> destination.
     std::vector<dest_t> by_person;
+    
+    randutil & rand;
 };
 
 #endif // __ASSIGNMENT_H__

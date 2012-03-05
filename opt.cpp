@@ -7,6 +7,7 @@
 #include "solve.h"
 #include "io.h"
 #include "objective.h"
+#include "parallel.h"
 
 int main() {
     size_t rooms = 0;
@@ -15,7 +16,7 @@ int main() {
 
     obj_goodness objective;
     cout_reporter reporter;
-    solve(input, objective, reporter);
+    parallel_solve(input, objective, reporter);
     return 0;
 }
 
