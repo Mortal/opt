@@ -203,35 +203,23 @@ struct cout_reporter {
 	    for (person_t p = 0; p < person_count; ++p) {
 		const priorities_t & prio = people[p];
 		dest_t dest = solution[p];
-		const roomies_t & wished_roomies = prio.roomies;
+		destassignment_t::item_type & actual_roomies = by_dest[dest];
+		goodness_calculation c(prio, dest, condition, actual_roomies);
+
 		std::cout << std::setw(6) << p << " &";
 		if (dest%4)
 		    std::cout << std::setw(2) << (4+dest/4) << '-' << dest%4 << ' ';
 		else
 		    std::cout << std::setw(2) << (4+dest/4) << '-' << "St";
-		std::cout << " &";
-		weight_t val = 0;
-		if (prio.w1 && condition[0][dest]) val += prio.w1;
-		if (prio.w2 && condition[1][dest]) val += prio.w2;
-		bool gp = false;
-		if (prio.wp) {
-		    destassignment_t::item_type & actual_roomies = by_dest[dest];
-		    for (person_t q = 0; q < actual_roomies.size(); ++q) {
-			if (wished_roomies.count(actual_roomies[q])) {
-			    gp = true;
-			    val += prio.wp;
-			    break;
-			}
-		    }
-		}
-		std::cout << std::setw(4) << gp << " &"
-		          << std::setw(4) << (prio.w1 && condition[0][dest]) << " &"
-		          << std::setw(4) << (prio.w2 && condition[1][dest]) << " &"
-			  << std::setw(4) << prio.wp << " &"
-			  << std::setw(4) << prio.w1 << " &"
-			  << std::setw(4) << prio.w2 << " &"
-			  << std::setw(3) << val << " & ";
-		for (roomies_t::const_iterator i = wished_roomies.begin(); i != wished_roomies.end(); ++i) {
+		std::cout << " &"
+		          << std::setw(4) << c.g_p << " &"
+		          << std::setw(4) << c.g_s << " &"
+		          << std::setw(4) << c.g_e << " &"
+			  << std::setw(4) << c.v_p << " &"
+			  << std::setw(4) << c.v_s << " &"
+			  << std::setw(4) << c.v_e << " &"
+			  << std::setw(3) << c.G << " & ";
+		for (roomies_t::const_iterator i = c.wished_roomies.begin(); i != c.wished_roomies.end(); ++i) {
 		    std::cout << std::setw(3) << *i << ',';
 		}
 		std::cout << " \\\\\n";
