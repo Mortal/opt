@@ -1,0 +1,108 @@
+\documentclass[article,oneside,11pt]{memoir}
+\usepackage[utf8]{inputenc}
+\usepackage[sc]{mathpazo}
+\usepackage{amsmath,amssymb}
+\usepackage[final]{microtype}
+\usepackage[danish]{babel}
+\newsubfloat{figure}
+\pagestyle{chapter}
+\begin{document}
+\chapter*{Optimering efter prioriteter}
+
+En beboer, der skal omhuses, kan give op til tre ønsker. For det første kan man
+ønske, hvem man vil bo på samme gang med. Man kan i den sammenhæng kun ønske
+folk, der skal genhuses i samme omgang. For det andet kan man ønske, om man vil
+bo ved Langelandsgade (Koll. 4-5-6) eller ved Nørrebrogade (Koll. 7-8-9). For
+det tredje kan man ønske, om man vil bo i stuen eller på 1./2./3. sal.
+
+Derudover kan man give udtryk for, hvor vigtige de tre ting er i forhold til
+hinanden. Man kan sige, at det kun betyder noget, hvem man kommer til at bo
+med, eller at dette overhovedet ikke betyder noget. Det gør man ved at give
+hver af tre ønsker vægtninger der tilsammen skal give 12. Det giver nemlig
+mulighed for mange fordelinger, eksempelvis: 12-0-0, 8-4-0, 6-6-0, 6-3-3,
+5-5-2, 4-4-4, 5-4-3.
+
+\begin{figure}[h]
+\begin{center}
+\small
+\begin{tabular}{ll}
+\toprule
+Beboer & 154 \\
+\midrule
+Personer: & 123 \\
+vægt: 8 & 213 \\
+& 321 \\
+\midrule
+Side: & $\text{\rlap{$\checkmark$}}\square$ Langelandsgade \\
+vægt: 4 & $\square$ Nørrebrogade \\
+\midrule
+Højde: & $\square$ Stue \\
+vægt: 0 & $\square$ Ikke stue \\
+\bottomrule
+\end{tabular}
+
+\vspace{1em}
+\begin{minipage}[t]{0.6\textwidth}
+\caption{En beboers ønsker. Beboeren er lige glad med stue/ikke stue, så denne har fået vægt 0, og ingen af ønskerne er markeret.}
+\end{minipage}
+\end{center}
+\end{figure}
+
+Vi skal nu finde ud af, hvordan én tildeling af beboere til gange er bedre end
+en anden. Det gør vi ved at indføre begrebet godhed, som er et kommatal der
+angiver hvor god en tildeling er. Den værste godhed, en tildeling kan have, er
+$0.0$, hvis ingen beboere har fået det, som de vil have det. Den bedste godhed er
+lig antallet af beboere, der skal omhuses, ganget med 12 (hvis $51$ skal
+omhuses er den bedste godhed $612$).
+
+For at beregne godhed skriver vi først op for hver beboer deres værelsesnummer
+samt hvilken gang de får lov at bo på. Ved hver beboer skriver vi så på linjen,
+om han/hun er kommet på samme gang som nogen af de personer, han/hun ønskede: 1
+eller 0 for hhv. ja og nej. Så skriver vi ved siden af dette, om beboeren på
+den side af unisøen, som han/hun ønskede: 1 eller 0.  Derefter skriver vi, om
+ønsket om etagen er opfyldt: 1 eller 0. Disse tre tal kalder vi for hhv. $g_p$,
+$g_s$ og $g_e$.  Beboerens vægtning af disse tre forhold kalder vi tilsvarende
+hhv. $v_p$, $v_s$ og $v_e$.  Nu beregner vi, hvor godt det ser ud for beboeren.
+Den individuelle godhed er
+\[G = v_p\cdot g_p + v_s\cdot g_s + v_e\cdot g_e.\]
+
+Det viser sig, at tallet $G$ altid ligger mellem 0 og 12, hvis
+summen af vægtningerne er 12.  Den samlede godhed for tildelingen er så summen
+af alle disse $G$ for hver beboer.
+
+\begin{figure}[h]
+\begin{center}
+\caption{To forskellige tildelinger med de samme fire beboere.}
+\subtop[Eksempel på tildeling med samlet godhed 16]{
+\begin{tabular}{ccccccccc}
+\toprule
+Beboer & Gang & $g_p$ & $g_s$ & $g_e$ & $v_p$ & $v_s$ & $v_e$ & $G$ \\ \midrule
+123 & 4-St & 1 & 0 & 0 & 4 & 8 & 0 & 4  \\ \midrule
+132 & 4-St & 1 & 1 & 0 & 6 & 6 & 0 & 12 \\ \midrule
+41  & 7-2  & 0 & 1 & 1 & 8 & 2 & 0 & 2  \\ \midrule
+8   & 8-2  & 0 & 0 & 1 & 6 & 6 & 0 & 0  \\ \midrule
+Sum &      &   &   &   &   &   &   & 16 \\ \bottomrule
+\end{tabular}
+}
+
+\subtop[Eksempel på tildeling med samlet godhed 28]{
+\begin{tabular}{ccccccccc}
+\toprule
+Beboer&Gang  &$g_p$&$g_s$&$g_e$&$v_p$&$v_s$&$v_e$&$G$ \\ \midrule
+123   & 7-St & 0   & 1   & 0   & 4   & 8   & 0   & 8  \\ \midrule
+132   & 8-1  & 0   & 0   & 1   & 6   & 6   & 0   & 0  \\ \midrule
+41    & 4-3  & 1   & 0   & 1   & 8   & 2   & 0   & 8  \\ \midrule
+8     & 4-3  & 1   & 1   & 1   & 6   & 6   & 0   & 12 \\ \midrule
+Sum   &      &     &     &     &     &     &     & 28 \\ \bottomrule
+\end{tabular}
+}
+\end{center}
+\end{figure}
+
+Nu skriver vi et computerprogram, der forsøger med mange milliarder forskellige
+tildelinger og husker på den med den højeste godhed. Med omtrent 50 beboere og
+24 gange er der så mange forskellige måder, man kan tildele beboere til gange,
+at vi aldrig kan nå at prøve alle muligheder. Vi kan dog skrive et program,
+hvor vi forventer at finde en af de bedste tildelinger på overkommelig tid.
+
+\end{document}
