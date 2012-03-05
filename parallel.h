@@ -10,10 +10,12 @@
 struct parallel_result {
     assignment_t solution;
     weight_t goodness;
+    size_t times;
 
-    inline parallel_result(const assignment_t & solution, const weight_t & goodness)
+    inline parallel_result(const assignment_t & solution, const weight_t & goodness, size_t times)
 	: solution(solution)
 	, goodness(goodness)
+	, times(times)
     {
     }
 };
@@ -38,23 +40,25 @@ struct parallel_buffer {
 
 struct parallel_reporter {
     inline parallel_reporter(parallel_buffer & b)
-	: b(b)
+	: b(b), times(0)
     {
     }
 
     inline void start() {
     }
 
-    inline void operator++() {}
-    inline void operator++(int) {}
+    inline void operator++() { ++times; }
+    inline void operator++(int) { ++times; }
+    inline void operator+=(size_t s) { times += s; }
 
     inline void operator()(const input_t & /*input*/, const assignment_t & solution, const weight_t & goodness) {
-	parallel_result res(solution, goodness);
+	parallel_result res(solution, goodness, times);
 	b.send_result(res);
     }
 
 private:
     parallel_buffer & b;
+    size_t times;
 };
 
 struct parallel_solver {
@@ -79,11 +83,13 @@ inline void parallel_solve(const input_t & input, Objective & obj, Reporter & re
 	boost::swap(th, threads[i]);
     }
 
+    size_t prev_times = 0;
     while (true) {
 	boost::unique_lock<boost::mutex> lock(buf.m);
 	buf.cond.wait(lock);
 	parallel_result res = buf.fetch();
-	++reporter;
+	reporter += t*(res.times-prev_times);
+	prev_times = res.times;
 	reporter(input, res.solution, res.goodness);
     }
 }

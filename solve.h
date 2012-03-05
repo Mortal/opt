@@ -187,6 +187,7 @@ struct cout_reporter {
 
     inline size_t operator++() { return ++attempts; }
     inline size_t operator++(int) { return attempts++; }
+    inline void operator+=(size_t s) { attempts += s; }
 
     inline void operator()(const input_t & input, const assignment_t & solution, const weight_t & goodness) {
 	    const people_t & people = input.people;
