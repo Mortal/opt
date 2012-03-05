@@ -14,7 +14,8 @@ int main() {
     input_t input = get_input(rooms, person_count);
 
     obj_goodness objective;
-    solve(input, objective);
+    cout_reporter reporter;
+    solve(input, objective, reporter);
     return 0;
 }
 

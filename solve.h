@@ -77,9 +77,9 @@ private:
     }
 };
 
-template <typename Objective>
+template <typename Objective, typename Reporter>
 struct solver_t {
-    inline solver_t(const input_t & input, Objective & obj)
+    inline solver_t(const input_t & input, Objective & obj, Reporter & rep)
 	: input(input)
 	, capacity(input.capacity)
 	, dest_count(capacity.size())
@@ -90,6 +90,7 @@ struct solver_t {
 	, solution(input)
 	, capacity_sum(0)
 	, obj(obj)
+	, rep(rep)
     {
 	for (dest_t d = 0; d < dest_count; ++d) {
 	    capacity_sum += capacity[d];
@@ -140,13 +141,10 @@ void go() {
     weight_t best_value = 0;
     std::unique_ptr<assignment_t> best;
     std::unique_ptr<assignment_t> next(new assignment_t(solution));
-    const size_t person_count = people.size();
-    size_t attempts = 0;
-    boost::timer::cpu_timer t;
-    t.start();
+    rep.start();
     while (true) {
 	shuffle();
-	++attempts;
+	++rep;
 	weight_t goodness = obj(input, solution);
 	if (!best.get() || goodness > best_value) {
 	    best_value = goodness;
@@ -155,9 +153,42 @@ void go() {
 		next.reset(new assignment_t(*best));
 	    }
 
+	    rep(input, solution, goodness);
+	}
+    }
+}
+
+private:
+    const input_t & input;
+    const capacity_t & capacity;
+    dest_t dest_count;
+    const people_t & people;
+    person_t person_count;
+    std::vector<dest_t> dests_in_order;
+    std::vector<person_t> people_in_order;
+    assignment_t solution;
+    bool has_next;
+    size_t capacity_sum;
+    Objective & obj;
+    Reporter & rep;
+};
+
+struct cout_reporter {
+    inline cout_reporter() : attempts(0) {
+    }
+
+    inline void start() {
+	t.start();
+    }
+
+    inline size_t operator++() { return ++attempts; }
+    inline size_t operator++(int) { return attempts++; }
+
+    inline void operator()(const input_t & input, const assignment_t & solution, const weight_t & goodness) {
 	    const people_t & people = input.people;
 	    const condition_t & condition = input.condition;
 	    destassignment_t by_dest = solution.by_dest();
+	    size_t person_count = people.size();
 
 	    std::cout << "\n\n";
 	    std::cout << t.format();
@@ -196,28 +227,16 @@ void go() {
 	    }
 	    std::cout << "Sum &&&&&&&& " << goodness << " & \\\\" << std::endl;
 	    std::cout << std::flush;
-	    attempts = 0;
-	}
     }
-}
 
 private:
-    const input_t & input;
-    const capacity_t & capacity;
-    dest_t dest_count;
-    const people_t & people;
-    person_t person_count;
-    std::vector<dest_t> dests_in_order;
-    std::vector<person_t> people_in_order;
-    assignment_t solution;
-    bool has_next;
-    size_t capacity_sum;
-    Objective & obj;
+    boost::timer::cpu_timer t;
+    size_t attempts;
 };
 
-template <typename Objective>
-inline void solve(const input_t & input, Objective & obj) {
-    solver_t<Objective> solver(input, obj);
+template <typename Objective, typename Reporter>
+inline void solve(const input_t & input, Objective & obj, Reporter & reporter) {
+    solver_t<Objective, Reporter> solver(input, obj, reporter);
     solver.go();
 }
 
