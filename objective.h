@@ -12,18 +12,19 @@ struct goodness_calculation {
 	: g_p(0)
 	, g_s(prio.w1 && condition[0][dest])
 	, g_e(prio.w2 && condition[1][dest])
-	, v_p(0)
-	, v_s(g_s ? prio.w1 : 0)
-	, v_e(g_e ? prio.w2 : 0)
+	, v_p(prio.wp)
+	, v_s(prio.w1)
+	, v_e(prio.w2)
 	, G(0)
 	, wished_roomies(prio.roomies)
     {
-	G += v_s + v_e;
+	if (g_s) G += v_s;
+	if (g_e) G += v_e;
 	if (prio.wp) {
 	    for (person_t q = 0; q < actual_roomies.size(); ++q) {
 		if (wished_roomies.count(actual_roomies[q])) {
 		    g_p = 1;
-		    G += v_p = prio.wp;
+		    G += v_p;
 		    break;
 		}
 	    }
