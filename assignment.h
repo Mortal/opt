@@ -7,13 +7,11 @@
 struct assignment_t {
     assignment_t(randutil & rand, const input_t & input)
 	: input(input)
-	, _remaining(input.capacity)
 	, dest_count(input.capacity.size())
 	, person_count(input.people.size())
-	, by_person(person_count, person_count)
 	, rand(rand)
     {
-
+	reset();
     }
 
     inline void reset() {
@@ -83,7 +81,7 @@ private:
     person_t person_count;
 
     // person -> destination.
-    std::vector<dest_t> by_person;
+    boost::array<dest_t, person_capacity> by_person;
     
     randutil & rand;
 };
