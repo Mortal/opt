@@ -12,39 +12,50 @@ typedef size_t dest_t;
 typedef size_t weight_t;
 
 static const person_t person_capacity = 47;
-static const person_t roomie_capacity = 5;
+static const person_t roomie_capacity = 9;
 
 // Input types
 
-// people you want to live with
-struct roomies_t {
-    typedef boost::array<person_t, roomie_capacity> container_t;
-    typedef container_t::const_iterator const_iterator;
+template <typename T, size_t N>
+struct static_vector {
+    typedef boost::array<T, N> container_t;
     container_t container;
-    int next;
+    typedef typename container_t::const_iterator const_iterator;
 
-    inline roomies_t() : next(0) {
+    size_t n;
+
+    inline static_vector() : n(0) {
+	std::fill(container.begin(), container.end(), T());
     }
 
-    inline void insert(person_t p) {
-	container[next++] = p;
+    inline T & operator[](size_t i) { return container[i]; }
+    inline const T & operator[](size_t i) const { return container[i]; }
+
+    inline void push_back(const T & el) {
+	container[n++] = el;
     }
 
-    inline const_iterator begin() const {
-	return container.begin();
+    inline void insert(const T & el) {
+	push_back(el);
     }
 
-    inline const_iterator end() const {
-	return container.end();
+    inline size_t size() const {
+	return n;
     }
 
-    inline size_t count(person_t p) const {
-	for (person_t i = 0; i < roomie_capacity; ++i) {
+    inline size_t count(const T & p) const {
+	for (size_t i = 0; i < N; ++i) {
 	    if (container[i] == p) return 1;
 	}
 	return 0;
     }
+
+    inline const_iterator begin() const { return container.begin(); }
+    inline const_iterator end() const { return container.begin()+n; }
 };
+
+// people you want to live with
+typedef static_vector<person_t, roomie_capacity> roomies_t;
 
 struct priorities_t {
     // Weight of satisfying roommate constraint
@@ -62,7 +73,7 @@ struct priorities_t {
 };
 
 // person -> priorities
-typedef std::vector<priorities_t> people_t;
+typedef static_vector<priorities_t, person_capacity> people_t;
 
 // destination -> capacity.
 typedef std::vector<size_t> capacity_t;
