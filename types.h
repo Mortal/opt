@@ -4,16 +4,47 @@
 #include <vector>
 #include <set>
 #include <cstddef>
+#include <boost/array.hpp>
 
 typedef size_t person_t;
 typedef size_t dest_t;
 
 typedef size_t weight_t;
 
+static const person_t person_capacity = 47;
+static const person_t roomie_capacity = 5;
+
 // Input types
 
 // people you want to live with
-typedef std::set<person_t> roomies_t;
+struct roomies_t {
+    typedef boost::array<person_t, roomie_capacity> container_t;
+    typedef container_t::const_iterator const_iterator;
+    container_t container;
+    int next;
+
+    inline roomies_t() : next(0) {
+    }
+
+    inline void insert(person_t p) {
+	container[next++] = p;
+    }
+
+    inline const_iterator begin() const {
+	return container.begin();
+    }
+
+    inline const_iterator end() const {
+	return container.end();
+    }
+
+    inline size_t count(person_t p) const {
+	for (person_t i = 0; i < roomie_capacity; ++i) {
+	    if (container[i] == p) return 1;
+	}
+	return 0;
+    }
+};
 
 struct priorities_t {
     // Weight of satisfying roommate constraint
