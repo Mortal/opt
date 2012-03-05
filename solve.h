@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <fstream>
+#include <iomanip>
 
 #include "types.h"
 #include "random.h"
@@ -151,11 +152,43 @@ void go() {
 		next.reset(new assignment_t(*best));
 	    }
 
+	    const people_t & people = input.people;
+	    const condition_t & condition = input.condition;
+	    destassignment_t by_dest = solution.by_dest();
+
 	    std::cout << "\n\nAfter " << since_last << " attempts.\nThe goodness is:" << std::endl;
 	    std::cout << goodness << std::endl;
-	    std::cout << "The result is:" << std::endl;
+	    std::cout << "Beboer & Gang & g_p & g_s & g_e & v_p & v_s & v_e & G  \\\\" << std::endl;
 	    for (person_t p = 0; p < person_count; ++p) {
-		std::cout << p << " -> " << solution[p] << std::endl;
+		const priorities_t & prio = people[p];
+		dest_t dest = solution[p];
+		const roomies_t & wished_roomies = prio.roomies;
+		std::cout << std::setw(6) << p << " &" << std::setw(5) << dest << " &";
+		weight_t val = 0;
+		if (prio.w1 && condition[0][dest]) val += prio.w1;
+		if (prio.w2 && condition[1][dest]) val += prio.w2;
+		bool gp = false;
+		if (prio.wp) {
+		    std::vector<person_t> & actual_roomies = by_dest[dest];
+		    for (person_t q = 0; q < actual_roomies.size(); ++q) {
+			if (wished_roomies.count(actual_roomies[q])) {
+			    gp = true;
+			    val += prio.wp;
+			    break;
+			}
+		    }
+		}
+		std::cout << std::setw(4) << gp << " &"
+		          << std::setw(4) << (prio.w1 && condition[0][dest]) << " &"
+		          << std::setw(4) << (prio.w2 && condition[1][dest]) << " &"
+			  << std::setw(4) << prio.wp << " &"
+			  << std::setw(4) << prio.w1 << " &"
+			  << std::setw(4) << prio.w2 << " &"
+			  << std::setw(3) << val << " \\\\ %";
+		for (roomies_t::const_iterator i = wished_roomies.begin(); i != wished_roomies.end(); ++i) {
+		    std::cout << std::setw(3) << *i << ',';
+		}
+		std::cout << '\n';
 	    }
 	    std::cout << std::endl;
 	    since_last = 0;
