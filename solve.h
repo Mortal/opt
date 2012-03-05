@@ -158,7 +158,7 @@ void go() {
 
 	    std::cout << "\n\nAfter " << since_last << " attempts.\nThe goodness is:" << std::endl;
 	    std::cout << goodness << std::endl;
-	    std::cout << "Beboer & Gang & g_p & g_s & g_e & v_p & v_s & v_e & G  \\\\" << std::endl;
+	    std::cout << "Beboer & Gang & g_p & g_s & g_e & v_p & v_s & v_e & G & Ønskede roomies \\\\" << std::endl;
 	    for (person_t p = 0; p < person_count; ++p) {
 		const priorities_t & prio = people[p];
 		dest_t dest = solution[p];
@@ -184,11 +184,11 @@ void go() {
 			  << std::setw(4) << prio.wp << " &"
 			  << std::setw(4) << prio.w1 << " &"
 			  << std::setw(4) << prio.w2 << " &"
-			  << std::setw(3) << val << " \\\\ %";
+			  << std::setw(3) << val << " & ";
 		for (roomies_t::const_iterator i = wished_roomies.begin(); i != wished_roomies.end(); ++i) {
 		    std::cout << std::setw(3) << *i << ',';
 		}
-		std::cout << '\n';
+		std::cout << " \\\\\n";
 	    }
 	    std::cout << std::endl;
 	    since_last = 0;
