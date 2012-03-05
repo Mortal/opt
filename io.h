@@ -26,8 +26,8 @@ inline input_t get_input(size_t & rooms, size_t & person_count) {
 	condition[0].resize(capacity.size(), false);
 	condition[1] = condition[0];
 	for (dest_t d = 0; d < capacity.size(); ++d) {
-	    if (d < capacity.size()/2) condition[0][d] = true;
-	    if (d % 2) condition[1][d] = true;
+	    if (d < 12) condition[0][d] = true;
+	    if (d % 4) condition[1][d] = true;
 	}
     }
     // Read priorities
