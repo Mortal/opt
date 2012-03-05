@@ -4,11 +4,6 @@
 #include "types.h"
 #include "assignment.h"
 
-// person list.
-typedef std::vector<person_t> personlist_t;
-// room -> person list.
-typedef std::vector<personlist_t> roomcontents_t;
-
 struct obj_goodness {
 weight_t operator()(const input_t & input, const assignment_t & assignment) {
     //const capacity_t & capacity = input.capacity;
@@ -25,7 +20,7 @@ weight_t operator()(const input_t & input, const assignment_t & assignment) {
 	if (prio.w2 && condition[1][dest]) val += prio.w2;
 	if (prio.wp) {
 	    const roomies_t & wished_roomies = prio.roomies;
-	    std::vector<person_t> & actual_roomies = by_dest[assignment[p]];
+	    destassignment_t::item_type & actual_roomies = by_dest[assignment[p]];
 	    for (person_t q = 0; q < actual_roomies.size(); ++q) {
 		if (wished_roomies.count(actual_roomies[q])) {
 		    val += prio.wp;

@@ -14,19 +14,26 @@ typedef size_t weight_t;
 static const person_t person_capacity = 47;
 static const person_t roomie_capacity = 9;
 static const dest_t dest_capacity = 25;
+static const person_t destpeople_capacity = 15;
 
 // Input types
 
 template <typename T, size_t N>
 struct static_vector {
+    typedef T item_type;
     typedef boost::array<T, N> container_t;
     container_t container;
+    typedef typename container_t::iterator iterator;
     typedef typename container_t::const_iterator const_iterator;
 
     size_t n;
 
     inline static_vector() : n(0) {
 	std::fill(container.begin(), container.end(), T());
+    }
+
+    inline static_vector(size_t n) : n(n) {
+	std::fill(container.begin(), container.begin()+n, T());
     }
 
     inline T & operator[](size_t i) { return container[i]; }
@@ -61,6 +68,8 @@ struct static_vector {
 	return 0;
     }
 
+    inline iterator begin() { return container.begin(); }
+    inline iterator end() { return container.begin()+n; }
     inline const_iterator begin() const { return container.begin(); }
     inline const_iterator end() const { return container.begin()+n; }
 };
@@ -93,7 +102,7 @@ typedef static_vector<size_t, dest_capacity> capacity_t;
 typedef static_vector<static_vector<bool, dest_capacity>, 2> condition_t;
 
 // destination -> person list
-typedef std::vector<std::vector<person_t> > destassignment_t;
+typedef static_vector<static_vector<person_t, destpeople_capacity>, dest_capacity> destassignment_t;
 
 struct input_t {
     capacity_t capacity;

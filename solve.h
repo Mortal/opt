@@ -11,6 +11,8 @@
 #include "random.h"
 #include "objective.h"
 
+typedef static_vector<dest_t, dest_capacity> destorder_t;
+typedef static_vector<person_t, person_capacity> personorder_t;
 
 struct permuter_t {
     inline permuter_t(const input_t & input) : input(input) {
@@ -107,9 +109,9 @@ struct solver_t {
 
     void shuffle() {
 	solution.reset();
-	std::vector<dest_t> destorder(dests_in_order);
+	destorder_t destorder(dests_in_order);
 	rand.shuffle(destorder.begin(), destorder.end());
-	std::vector<person_t> order(people_in_order);
+	personorder_t order(people_in_order);
 	rand.shuffle(order.begin(), order.end());
 	dest_t d;
 	person_t p = 0;
@@ -164,8 +166,8 @@ private:
     dest_t dest_count;
     const people_t & people;
     person_t person_count;
-    std::vector<dest_t> dests_in_order;
-    std::vector<person_t> people_in_order;
+    destorder_t dests_in_order;
+    personorder_t people_in_order;
     randutil rand;
     assignment_t solution;
     bool has_next;
@@ -205,7 +207,7 @@ struct cout_reporter {
 		if (prio.w2 && condition[1][dest]) val += prio.w2;
 		bool gp = false;
 		if (prio.wp) {
-		    std::vector<person_t> & actual_roomies = by_dest[dest];
+		    destassignment_t::item_type & actual_roomies = by_dest[dest];
 		    for (person_t q = 0; q < actual_roomies.size(); ++q) {
 			if (wished_roomies.count(actual_roomies[q])) {
 			    gp = true;

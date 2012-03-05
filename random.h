@@ -16,34 +16,6 @@ void shuffle(IT begin, IT end) {
     }
 }
 
-template <typename C>
-struct shuffled_iterator {
-    shuffled_iterator(const std::vector<C> & source)
-	: items(source)
-	, n(items.size())
-	, indexes(n)
-	, index(0)
-    {
-	for (size_t i = 0; i < n; ++i) {
-	    indexes[i] = i;
-	}
-	std::iter_swap(items.begin(), items.begin()+rand_less_than(n));
-    }
-    const C & operator*() {
-	return items[index];
-    }
-    void operator++(int) { ++*this; }
-    void operator++() {
-	++index;
-	std::iter_swap(items.begin()+index, items.begin()+index+rand_less_than(n)-1);
-    }
-private:
-    std::vector<C> items;
-    size_t n;
-    std::vector<int> indexes;
-    size_t index;
-};
-
 int rand_less_than(int bound) {
     boost::uniform_smallint<> dist(0,bound-1);
     boost::variate_generator<boost::mt19937&, boost::uniform_smallint<> > rng(random_source, dist);
