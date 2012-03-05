@@ -25,7 +25,7 @@ geninput: geninput.o
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-opt.o: opt.cpp types.h objective.h solve.h io.h assignment.h
+opt.o: opt.cpp assignment.h io.h objective.h parallel.h random.h solve.h types.h
 
 geninput.o: geninput.cpp
 
