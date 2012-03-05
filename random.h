@@ -6,6 +6,12 @@
 
 struct randutil {
 
+inline randutil(uint32_t seed) : random_source(seed) {
+}
+
+inline randutil() {
+}
+
 boost::mt19937 random_source;
 
 template <typename IT>

@@ -63,8 +63,8 @@ private:
 
 struct parallel_solver {
     template <typename Objective>
-    inline void operator()(const input_t & input, Objective & obj, parallel_reporter & rep) {
-	solver_t<Objective, parallel_reporter> solver(input, obj, rep);
+    inline void operator()(const input_t & input, Objective & obj, parallel_reporter & rep, uint32_t seed) {
+	solver_t<Objective, parallel_reporter> solver(input, obj, rep, seed);
 	solver.go();
     }
 };
@@ -77,9 +77,10 @@ inline void parallel_solve(const input_t & input, Objective & obj, Reporter & re
 
     unsigned int t = boost::thread::hardware_concurrency();
     boost::thread threads[t];
+    randutil rand;
     for (unsigned int i = 0; i < t; ++i) {
 	parallel_solver p;
-	boost::thread th(p, input, obj, rep);
+	boost::thread th(p, input, obj, rep, rand.random_source());
 	boost::swap(th, threads[i]);
     }
 

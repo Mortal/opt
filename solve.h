@@ -82,7 +82,7 @@ private:
 
 template <typename Objective, typename Reporter>
 struct solver_t {
-    inline solver_t(const input_t & input, Objective & obj, Reporter & rep)
+    inline solver_t(const input_t & input, Objective & obj, Reporter & rep, uint32_t seed)
 	: input(input)
 	, capacity(input.capacity)
 	, dest_count(capacity.size())
@@ -90,6 +90,7 @@ struct solver_t {
 	, person_count(people.size())
 	, dests_in_order(dest_count)
 	, people_in_order(person_count)
+	, rand(seed)
 	, solution(rand, input)
 	, capacity_sum(0)
 	, obj(obj)
