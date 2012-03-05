@@ -15,6 +15,7 @@ static const person_t person_capacity = 47;
 static const person_t roomie_capacity = 9;
 static const dest_t dest_capacity = 25;
 static const person_t destpeople_capacity = 15;
+static const size_t capacitysum_capacity = 50;
 
 // Input types
 

@@ -13,6 +13,7 @@
 
 typedef static_vector<dest_t, dest_capacity> destorder_t;
 typedef static_vector<person_t, person_capacity> personorder_t;
+typedef static_vector<dest_t, capacitysum_capacity> slots_t;
 
 struct permuter_t {
     inline permuter_t(const input_t & input) : input(input) {
@@ -126,7 +127,7 @@ struct solver_t {
     }
 
     void random_assignment() {
-	std::vector<dest_t> slots(capacity_sum);
+	slots_t slots(capacity_sum);
 	size_t i = 0;
 	for (dest_t d = 0; d < capacity.size(); ++d) {
 	    for (size_t j = 0; j < capacity[d]; ++j, ++i) {
