@@ -43,18 +43,9 @@ weight_t operator()(const input_t & input, const assignment_t & assignment) {
     for (person_t p = 0; p < person_count; ++p) {
 	const priorities_t & prio = people[p];
 	dest_t dest = assignment[p];
-	if (prio.w1 && condition[0][dest]) val += prio.w1;
-	if (prio.w2 && condition[1][dest]) val += prio.w2;
-	if (prio.wp) {
-	    const roomies_t & wished_roomies = prio.roomies;
-	    destassignment_t::item_type & actual_roomies = by_dest[assignment[p]];
-	    for (person_t q = 0; q < actual_roomies.size(); ++q) {
-		if (wished_roomies.count(actual_roomies[q])) {
-		    val += prio.wp;
-		    break;
-		}
-	    }
-	}
+	destassignment_t::item_type & actual_roomies = by_dest[assignment[p]];
+	goodness_calculation c(prio, dest, condition, actual_roomies);
+	val += c.G;
     }
     return val;
 }
