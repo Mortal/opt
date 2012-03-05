@@ -1,6 +1,7 @@
 #ifndef __SOLVE_H__
 #define __SOLVE_H__
 
+#include <boost/timer/timer.hpp>
 #include <vector>
 #include <memory>
 #include <fstream>
@@ -140,10 +141,12 @@ void go() {
     std::unique_ptr<assignment_t> best;
     std::unique_ptr<assignment_t> next(new assignment_t(solution));
     const size_t person_count = people.size();
-    size_t since_last = 0;
+    size_t attempts = 0;
+    boost::timer::cpu_timer t;
+    t.start();
     while (true) {
 	shuffle();
-	++since_last;
+	++attempts;
 	weight_t goodness = obj(input, solution);
 	if (!best.get() || goodness > best_value) {
 	    best_value = goodness;
@@ -156,8 +159,9 @@ void go() {
 	    const condition_t & condition = input.condition;
 	    destassignment_t by_dest = solution.by_dest();
 
-	    std::cout << "\n\nAfter " << since_last << " attempts.\nThe goodness is:" << std::endl;
-	    std::cout << goodness << std::endl;
+	    std::cout << "\n\n";
+	    std::cout << t.format();
+	    std::cout << "After " << attempts << " attempts in total." << std::endl;
 	    std::cout << "Beboer & Gang & g_p & g_s & g_e & v_p & v_s & v_e & G & Ønskede roomies \\\\" << std::endl;
 	    for (person_t p = 0; p < person_count; ++p) {
 		const priorities_t & prio = people[p];
@@ -190,8 +194,9 @@ void go() {
 		}
 		std::cout << " \\\\\n";
 	    }
-	    std::cout << std::endl;
-	    since_last = 0;
+	    std::cout << "Sum &&&&&&&& " << goodness << " & \\\\" << std::endl;
+	    std::cout << std::flush;
+	    attempts = 0;
 	}
     }
 }

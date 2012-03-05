@@ -1,5 +1,6 @@
 CXX=g++
 CXXFLAGS=-O3 -Wall -Wextra --std=gnu++0x
+LDFLAGS=-lboost_system -lboost_timer
 
 opt: opt.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
