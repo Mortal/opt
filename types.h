@@ -13,6 +13,7 @@ typedef size_t weight_t;
 
 static const person_t person_capacity = 47;
 static const person_t roomie_capacity = 9;
+static const dest_t dest_capacity = 25;
 
 // Input types
 
@@ -41,6 +42,16 @@ struct static_vector {
 
     inline size_t size() const {
 	return n;
+    }
+
+    inline void resize(size_t m) {
+	n = m;
+	std::fill(container.begin(), (m == N) ? container.end() : container.begin()+m, T());
+    }
+
+    inline void resize(size_t m, const T & el) {
+	n = m;
+	std::fill(container.begin(), (m == N) ? container.end() : container.begin()+m, el);
     }
 
     inline size_t count(const T & p) const {
@@ -76,10 +87,10 @@ struct priorities_t {
 typedef static_vector<priorities_t, person_capacity> people_t;
 
 // destination -> capacity.
-typedef std::vector<size_t> capacity_t;
+typedef static_vector<size_t, dest_capacity> capacity_t;
 
 // condition number -> room -> condition value
-typedef std::vector<std::vector<bool> > condition_t;
+typedef static_vector<static_vector<bool, dest_capacity>, 2> condition_t;
 
 // destination -> person list
 typedef std::vector<std::vector<person_t> > destassignment_t;
