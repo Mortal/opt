@@ -88,8 +88,8 @@ struct solver_t {
 	, dest_count(capacity.size())
 	, people(input.people)
 	, person_count(people.size())
-	, dests_in_order(dest_count)
-	, people_in_order(person_count)
+	, destorder(dest_count)
+	, personorder(person_count)
 	, rand(seed)
 	, solution(rand, input)
 	, capacity_sum(0)
@@ -98,46 +98,29 @@ struct solver_t {
     {
 	for (dest_t d = 0; d < dest_count; ++d) {
 	    capacity_sum += capacity[d];
-	    dests_in_order[d] = d;
+	    destorder[d] = d;
 	}
 	for (person_t i = 0; i < person_count; ++i) {
-	    people_in_order[i] = i;
+	    personorder[i] = i;
 	}
-	random_assignment();
-	//shuffle();
+	shuffle();
     }
 
     inline operator bool() { return has_next; }
 
     void shuffle() {
 	solution.reset();
-	destorder_t destorder(dests_in_order);
 	rand.shuffle(destorder.begin(), destorder.end());
-	personorder_t order(people_in_order);
-	rand.shuffle(order.begin(), order.end());
+	rand.shuffle(personorder.begin(), personorder.end());
 	dest_t d;
 	person_t p = 0;
 	for (d = 0; d < dest_count; ++d) {
 	    dest_t next = destorder[d];
 	    while (solution.remaining(next)) {
-		solution.set_person(order[p++], next);
+		solution.set_person(personorder[p++], next);
 		if (p >= person_count) break;
 	    }
 	    if (p >= person_count) break;
-	}
-    }
-
-    void random_assignment() {
-	slots_t slots(capacity_sum);
-	size_t i = 0;
-	for (dest_t d = 0; d < capacity.size(); ++d) {
-	    for (size_t j = 0; j < capacity[d]; ++j, ++i) {
-		slots[i] = d;
-	    }
-	}
-	rand.shuffle(slots.begin(), slots.end());
-	for (person_t p = 0; p < people.size(); ++p) {
-	    solution.set_person(p, slots[p]);
 	}
     }
 
@@ -168,8 +151,8 @@ private:
     dest_t dest_count;
     const people_t & people;
     person_t person_count;
-    destorder_t dests_in_order;
-    personorder_t people_in_order;
+    destorder_t destorder;
+    personorder_t personorder;
     randutil rand;
     assignment_t solution;
     bool has_next;
