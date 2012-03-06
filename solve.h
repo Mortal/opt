@@ -208,6 +208,13 @@ struct cout_reporter {
     inline size_t operator++(int) { return attempts++; }
     inline void operator+=(size_t s) { attempts += s; }
 
+    struct ptrless {
+	template <typename T>
+	inline bool operator()(const T * a, const T * b) {
+	    return *a < *b;
+	}
+    };
+
     inline void operator()(const input_t & input, const assignment_t & solution, const weight_t & goodness) {
 	    const people_t & people = input.people;
 	    const condition_t & condition = input.condition;
@@ -218,12 +225,21 @@ struct cout_reporter {
 	    std::cout << t.format();
 	    std::cout << "After " << attempts << " attempts in total." << std::endl;
 	    std::cout << "Beboer & Gang & g_p & g_s & g_e & v_p & v_s & v_e &  G & Ønskede roomies \\\\" << std::endl;
+
+	    char buf[person_count*sizeof(goodness_calculation)];
+	    goodness_calculation * gs = reinterpret_cast<goodness_calculation *>(buf);
+	    goodness_calculation * pgs[person_count];
+
 	    for (person_t p = 0; p < person_count; ++p) {
 		const priorities_t & prio = people[p];
 		dest_t dest = solution[p];
 		destassignment_t::item_type & actual_roomies = by_dest[dest];
-		goodness_calculation c(prio, dest, condition, actual_roomies);
-
+		pgs[p] = new (gs+p) goodness_calculation(prio, dest, condition, actual_roomies);
+	    }
+	    std::sort(pgs+0, pgs+person_count, ptrless());
+	    for (person_t p = 0; p < person_count; ++p) {
+		const goodness_calculation & c = *pgs[p];
+		dest_t dest = solution[p];
 		std::cout << std::setw(6) << p << " &";
 		if (dest%4)
 		    std::cout << std::setw(2) << (4+dest/4) << '-' << dest%4 << ' ';

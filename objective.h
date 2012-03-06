@@ -30,6 +30,10 @@ struct goodness_calculation {
 	    }
 	}
     }
+
+    inline bool operator<(const goodness_calculation & other) const {
+	return G < other.G;
+    }
 };
 
 struct obj_goodness {
