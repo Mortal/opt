@@ -240,7 +240,7 @@ struct cout_reporter {
 	    for (person_t p = 0; p < person_count; ++p) {
 		const goodness_calculation & c = *pgs[p];
 		dest_t dest = solution[p];
-		std::cout << std::setw(6) << p << " &";
+		std::cout << std::setw(6) << pgs[p]-gs << " &";
 		if (dest%4)
 		    std::cout << std::setw(2) << (4+dest/4) << '-' << dest%4 << ' ';
 		else
