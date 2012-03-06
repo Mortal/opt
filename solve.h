@@ -16,7 +16,7 @@ typedef static_vector<person_t, person_capacity> personorder_t;
 typedef static_vector<dest_t, capacitysum_capacity> slots_t;
 
 struct permuter_t {
-    inline permuter_t(const input_t & input) : input(input) {
+    inline permuter_t(const input_t & input) : input(input), _exhausted(false) {
 	dest_count = input.capacity.size();
 	person_count = input.people.size();
 	reset();
@@ -28,11 +28,16 @@ struct permuter_t {
 	seed = p1 = p2 = d1 = d2 = p = d = 0;
     }
     inline void operator()(assignment_t & assignment) {
-	if (p < person_count) {
+	while (p < person_count) {
 	    if (assignment.remaining(d) > 0) {
 		assignment.set_person(p, d);
+		inc();
+		return;
+	    } else {
+		inc();
 	    }
-	} else if (p1 < person_count) {
+	}
+	if (p1 < person_count) {
 	    assignment.swap_people(p1, p2);
 	} else {
 	    assignment.swap_dests(d1, d2);
@@ -54,21 +59,21 @@ private:
 
     inline void inc() {
 	if (p < person_count) {
-	    if (d < dest_count) {
+	    if (d < dest_count-1) {
 		++d;
 	    } else {
 		++p;
 		d = 0;
 	    }
 	} if (p1 < person_count) {
-	    if (p2 < person_count) {
+	    if (p2 < person_count-1) {
 		++p2;
 	    } else {
 		++p1;
 		p2 = 0;
 	    }
 	} else if (d1 < dest_count) {
-	    if (d2 < dest_count) {
+	    if (d2 < dest_count-1) {
 		++d2;
 	    } else {
 		++d1;
@@ -124,23 +129,53 @@ struct solver_t {
 	}
     }
 
+void optimize(assignment_t & best) {
+    weight_t best_value = obj(input, best);
+    solution = best;
+    permuter_t p(input);
+    while (!p.exhausted()) {
+	p(solution);
+	weight_t goodness = obj(input, solution);
+	if (goodness > best_value) {
+	    best_value = goodness;
+	    best = solution;
+	    p.reset();
+	}
+    }
+    solution = best;
+}
+
 void go() {
     weight_t best_value = 0;
     std::unique_ptr<assignment_t> best;
     std::unique_ptr<assignment_t> next(new assignment_t(solution));
     rep.start();
+    size_t since_last = 0;
+    bool maximized = false;
     while (true) {
-	shuffle();
+	weight_t goodness;
+#ifdef DEBUG
+	const size_t threshold = 10000;
+#else
+	const size_t threshold = 1000000;
+#endif
+	if (!maximized && since_last >= threshold) {
+	    optimize(*best);
+	    since_last = 0;
+	    goodness = obj(input, solution);
+	    maximized = true;
+	} else {
+	    shuffle();
+	    ++since_last;
+	    goodness = obj(input, solution);
+	    if (goodness > best_value) maximized = false;
+	}
 	++rep;
-	weight_t goodness = obj(input, solution);
 	if (!best.get() || goodness > best_value) {
 	    best_value = goodness;
-	    best.swap(next);
-	    if (!next.get()) {
-		next.reset(new assignment_t(*best));
-	    }
-
+	    best.reset(new assignment_t(solution));
 	    rep(input, solution, goodness);
+	    since_last = 0;
 	}
     }
 }
@@ -218,7 +253,7 @@ private:
 
 template <typename Objective, typename Reporter>
 inline void solve(const input_t & input, Objective & obj, Reporter & reporter) {
-    solver_t<Objective, Reporter> solver(input, obj, reporter);
+    solver_t<Objective, Reporter> solver(input, obj, reporter, 0);
     solver.go();
 }
 
