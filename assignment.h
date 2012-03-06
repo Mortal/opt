@@ -36,6 +36,7 @@ struct assignment_t {
     }
 
     inline void set_person(person_t p, dest_t d) {
+	BOOST_ASSERT(p < person_count);
 	if (by_person[p] < person_count) {
 	    ++_remaining[by_person[p]];
 	}
@@ -49,29 +50,29 @@ struct assignment_t {
 	    std::swap(d1, d2);
 	} else if (dests[d1].size() == dests[d2].size()) {
 	    for (person_t p = 0; p < dests[d1].size(); ++p) {
-		set_person(dests[d1][p], d2);
-	    }
-	    for (person_t p = 0; p < dests[d2].size(); ++p) {
-		set_person(dests[d2][p], d1);
+		swap_people(dests[d1][p], dests[d2][p]);
 	    }
 	    return;
 	}
 	// dests[d1].size() < dests[d2].size().
+	rand.shuffle(dests[d2].begin(), dests[d2].end());
 	for (person_t p = 0; p < dests[d1].size(); ++p) {
-	    set_person(dests[d1][p], d2);
-	}
-	std::vector<char> mask = rand.random_mask(dests[d1].size(), dests[d2].size());
-	for (person_t p = 0; p < dests[d2].size(); ++p) {
-	    if (mask[p]) {
-		set_person(dests[d2][p], d1);
-	    }
+	    swap_people(dests[d1][p], dests[d2][p]);
 	}
     }
 
     inline void swap_people(person_t p1, person_t p2) {
-	dest_t d2 = by_person[p1];
-	set_person(p1, by_person[p2]);
-	set_person(p2, d2);
+	BOOST_ASSERT(p1 < person_count);
+	BOOST_ASSERT(p2 < person_count);
+	std::swap(by_person[p1], by_person[p2]);
+    }
+
+    inline assignment_t & operator=(const assignment_t & other) {
+	dest_count = other.dest_count;
+	person_count = other.person_count;
+	std::copy(other._remaining.begin(), other._remaining.begin()+dest_count, _remaining.begin());
+	std::copy(other.by_person.begin(), other.by_person.begin()+person_count, by_person.begin());
+	return *this;
     }
 
 private:
