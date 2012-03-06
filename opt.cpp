@@ -9,14 +9,18 @@
 #include "objective.h"
 #include "parallel.h"
 
-int main() {
+int main(int argc, char ** argv) {
     size_t rooms = 0;
     size_t person_count = 0;
     input_t input = get_input(rooms, person_count);
 
     obj_goodness objective;
     cout_reporter reporter;
-    parallel_solve(input, objective, reporter);
+    bool parallel = !(argc > 1 && std::string(argv[1]) == "--sequential");
+    if (parallel)
+	parallel_solve(input, objective, reporter);
+    else
+	solve(input, objective, reporter);
     return 0;
 }
 
