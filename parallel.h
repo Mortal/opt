@@ -3,6 +3,7 @@
 
 #include <boost/thread.hpp>
 #include <memory>
+#include <ctime>
 
 #include "random.h"
 #include "solve.h"
@@ -77,10 +78,11 @@ inline void parallel_solve(const input_t & input, Objective & obj, Reporter & re
 
     unsigned int t = boost::thread::hardware_concurrency();
     boost::thread threads[t];
-    randutil rand;
+    randutil rand(time(NULL));
+    uint32_t seed = rand.random_source();
     for (unsigned int i = 0; i < t; ++i) {
 	parallel_solver p;
-	boost::thread th(p, input, obj, rep, rand.random_source());
+	boost::thread th(p, input, obj, rep, seed+i);
 	boost::swap(th, threads[i]);
     }
 

@@ -6,6 +6,7 @@
 #include <memory>
 #include <fstream>
 #include <iomanip>
+#include <ctime>
 
 #include "types.h"
 #include "random.h"
@@ -269,7 +270,7 @@ private:
 
 template <typename Objective, typename Reporter>
 inline void solve(const input_t & input, Objective & obj, Reporter & reporter) {
-    solver_t<Objective, Reporter> solver(input, obj, reporter, 0);
+    solver_t<Objective, Reporter> solver(input, obj, reporter, time(NULL));
     solver.go();
 }
 
