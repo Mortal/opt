@@ -9,18 +9,36 @@
 #include "objective.h"
 #include "parallel.h"
 
-int main(int argc, char ** argv) {
-    size_t rooms = 0;
-    size_t person_count = 0;
-    input_t input = get_input(rooms, person_count);
-
+template <typename Reporter>
+void go(input_t & input, bool parallel) {
+    Reporter reporter;
     obj_goodness objective;
-    cout_reporter reporter;
-    bool parallel = !(argc > 1 && std::string(argv[1]) == "--sequential");
     if (parallel)
 	parallel_solve(input, objective, reporter);
     else
 	solve(input, objective, reporter);
+}
+
+int main(int argc, char ** argv) {
+    bool parallel = true;
+    bool use_debug_reporter = false;
+    for (int i = 1; i < argc; ++i) {
+	std::string arg(argv[i]);
+	if (arg == "-s" || arg == "--sequential") {
+	    parallel = false;
+	} else if (arg == "-d" || arg == "--debug") {
+	    use_debug_reporter = true;
+	}
+    }
+    size_t rooms = 0;
+    size_t person_count = 0;
+    input_t input = get_input(rooms, person_count);
+
+    if (use_debug_reporter)
+	go<debug_reporter>(input, parallel);
+    else
+	go<cout_reporter>(input, parallel);
+
     return 0;
 }
 
