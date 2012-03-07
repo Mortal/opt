@@ -202,11 +202,7 @@ void go() {
 
     while (true) {
 	weight_t goodness;
-#ifdef DEBUG
-	const size_t threshold = 10000;
-#else
-	const size_t threshold = 1000000;
-#endif
+	const size_t threshold = 50000;
 	if (since_last >= threshold) {
 	    solution = best_unoptimized;
 	    optimize(solution);
