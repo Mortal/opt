@@ -109,12 +109,12 @@ struct solver_t {
 	for (person_t i = 0; i < person_count; ++i) {
 	    personorder[i] = i;
 	}
-	shuffle();
+	shuffle(solution);
     }
 
     inline operator bool() { return has_next; }
 
-    void shuffle() {
+    void shuffle(assignment_t & solution) {
 	solution.reset();
 	rand.shuffle(destorder.begin(), destorder.end());
 	rand.shuffle(personorder.begin(), personorder.end());
@@ -166,7 +166,7 @@ void go() {
 	    goodness = obj(input, solution);
 	    maximized = true;
 	} else {
-	    shuffle();
+	    shuffle(solution);
 	    ++since_last;
 	    goodness = obj(input, solution);
 	    if (goodness > best_value) maximized = false;
