@@ -212,7 +212,10 @@ void go() {
 	    shuffle(solution);
 	    ++since_last;
 	    goodness = obj(input, solution);
-	    if (goodness > best_unoptimized_value) best_unoptimized = solution;
+	    if (goodness > best_unoptimized_value) {
+		best_unoptimized = solution;
+		best_unoptimized_value = goodness;
+	    }
 	}
 	++rep;
 	if (goodness > best_value) {
