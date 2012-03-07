@@ -154,15 +154,20 @@ void optimize(assignment_t & base) {
 }
 
 void locally_optimize(assignment_t & best) {
-    permuter_t p(input);
     weight_t best_value = obj(input, best);
-    while (!p.exhausted()) {
-	assignment_t solution = best;
-	p(solution);
-	weight_t goodness = obj(input, solution);
-	if (goodness > best_value) {
-	    best_value = goodness;
-	    best = solution;
+    bool improvement = true;
+    while (improvement) {
+	improvement = false;
+	permuter_t p(input);
+	while (!p.exhausted()) {
+	    assignment_t solution = best;
+	    p(solution);
+	    weight_t goodness = obj(input, solution);
+	    if (goodness > best_value) {
+		best_value = goodness;
+		best = solution;
+		improvement = true;
+	    }
 	}
     }
 }
