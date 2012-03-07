@@ -5,7 +5,21 @@
 
 // person -> destination
 struct assignment_t {
-    assignment_t(randutil & rand, const input_t & input)
+    typedef uint32_t hash_type;
+
+    inline hash_type hash() {
+	hash_type h = 0;
+	destassignment_t a = by_dest();
+	for (dest_t d = 0; d < dest_count; ++d) {
+	    h = h*13;
+	    for (person_t p = 0; p < a[d].size(); ++p) {
+		h += a[d][p];
+	    }
+	}
+	return h;
+    }
+
+    inline assignment_t(randutil & rand, const input_t & input)
 	: input(input)
 	, dest_count(input.capacity.size())
 	, person_count(input.people.size())

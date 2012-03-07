@@ -130,29 +130,66 @@ struct solver_t {
 	}
     }
 
-void optimize(assignment_t & best) {
-    weight_t best_value = obj(input, best);
-    solution = best;
+void optimize(assignment_t & base) {
+    assignment_t first = base;
+    assignment_t second = base;
+    weight_t w = obj(input, base);
     permuter_t p(input);
+    find_best(base, p, first, second, w, w);
+    {
+    weight_t w1 = obj(input, first);
+    weight_t w2 = obj(input, second);
+    std::cout << "\nOptimizing " << base.hash() << '/' << w << " yields " << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << std::endl;
+    }
+    locally_optimize(first);
+    locally_optimize(second);
+    weight_t w1 = obj(input, first);
+    weight_t w2 = obj(input, second);
+    std::cout << "Local optimizations yield " << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << std::endl;
+    if (w1 > w2) {
+	base = first;
+    } else {
+	base = second;
+    }
+}
+
+void locally_optimize(assignment_t & best) {
+    permuter_t p(input);
+    weight_t best_value = obj(input, best);
     while (!p.exhausted()) {
+	assignment_t solution = best;
 	p(solution);
 	weight_t goodness = obj(input, solution);
 	if (goodness > best_value) {
 	    best_value = goodness;
 	    best = solution;
-	    p.reset();
 	}
     }
-    solution = best;
+}
+
+void find_best(assignment_t & base, permuter_t & p, assignment_t & first, assignment_t & second, weight_t firstv, weight_t secondv, bool swap = false) {
+    while (!p.exhausted()) {
+	assignment_t solution = base;
+	p(solution);
+	weight_t solv = obj(input, solution);
+	if (solv > firstv) {
+	    second = solution;
+	    return find_best(base, p, second, first, solv, firstv, !swap);
+	} else if (solv > secondv) {
+	    second = solution;
+	    return find_best(base, p, first, second, firstv, solv, swap);
+	}
+    }
+    if (swap) std::swap(first, second);
 }
 
 void go() {
     weight_t best_value = 0;
-    std::unique_ptr<assignment_t> best;
-    std::unique_ptr<assignment_t> next(new assignment_t(solution));
-    rep.start();
+    assignment_t best_unoptimized = solution;
+    weight_t best_unoptimized_value = 0;
     size_t since_last = 0;
-    bool maximized = false;
+    rep.start();
+
     while (true) {
 	weight_t goodness;
 #ifdef DEBUG
@@ -160,21 +197,21 @@ void go() {
 #else
 	const size_t threshold = 1000000;
 #endif
-	if (!maximized && since_last >= threshold) {
-	    optimize(*best);
+	if (since_last >= threshold) {
+	    solution = best_unoptimized;
+	    optimize(solution);
 	    since_last = 0;
 	    goodness = obj(input, solution);
-	    maximized = true;
+	    best_unoptimized_value = 0;
 	} else {
 	    shuffle(solution);
 	    ++since_last;
 	    goodness = obj(input, solution);
-	    if (goodness > best_value) maximized = false;
+	    if (goodness > best_unoptimized_value) best_unoptimized = solution;
 	}
 	++rep;
-	if (!best.get() || goodness > best_value) {
+	if (goodness > best_value) {
 	    best_value = goodness;
-	    best.reset(new assignment_t(solution));
 	    rep(input, solution, goodness);
 	    since_last = 0;
 	}
