@@ -131,21 +131,26 @@ struct solver_t {
     }
 
 void optimize(assignment_t & base) {
+    //std::cout << '\n';
+    weight_t w = obj(input, base);
+    //std::cout << "\nLocally optimizing " << base.hash() << '/' << w << " -> " << std::flush;
+    //locally_optimize(base);
+    //w = obj(input, base);
+    //std::cout << base.hash() << '/' << w << std::endl;
     assignment_t first = base;
     assignment_t second = base;
-    weight_t w = obj(input, base);
     permuter_t p(input);
     find_best(base, p, first, second, w, w);
-    {
-    weight_t w1 = obj(input, first);
-    weight_t w2 = obj(input, second);
-    std::cout << "\nOptimizing " << base.hash() << '/' << w << " yields " << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << std::endl;
-    }
+    //{
+    //weight_t w1 = obj(input, first);
+    //weight_t w2 = obj(input, second);
+    //std::cout << "Optimizing yields " << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << " -> " << std::flush;
+    //}
     locally_optimize(first);
     locally_optimize(second);
     weight_t w1 = obj(input, first);
     weight_t w2 = obj(input, second);
-    std::cout << "Local optimizations yield " << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << std::endl;
+    //std::cout << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << std::endl;
     if (w1 > w2) {
 	base = first;
     } else {
