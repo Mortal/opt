@@ -52,7 +52,6 @@ struct assignment_tournament {
     inline std::shared_ptr<assignment_t> pop() {
 	std::shared_ptr<assignment_t> best = tree.top().second;
 	tree.pop();
-	++remaining;
 	return best;
     }
 
