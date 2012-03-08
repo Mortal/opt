@@ -69,8 +69,9 @@ struct tournament_tree {
 	return std::numeric_limits<T>::min();
     }
 
-    inline tournament_tree()
+    inline tournament_tree(const T & worst = std::numeric_limits<T>::min())
 	: next_contestant(0)
+	, m_worst(worst)
     {
     }
 
@@ -93,6 +94,7 @@ private:
     size_t next_contestant;
     tournament_tree_round<std::pair<T, index_t>, rounds> inner;
     T values[Capacity];
+    T m_worst;
 
     inline size_t winner_index() {
 	return inner.winner().second;
