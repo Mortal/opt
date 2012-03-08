@@ -118,6 +118,11 @@ struct tournament_tree {
 	inner.print();
     }
 
+    inline void replace_top(const T & k) {
+	size_t index = winner_index();
+	inner.set(index, std::make_pair(k, index));
+    }
+
 private:
     size_t next_contestant;
     tournament_tree_round<std::pair<T, index_t>, rounds> inner;
