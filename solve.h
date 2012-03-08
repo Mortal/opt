@@ -11,10 +11,51 @@
 #include "types.h"
 #include "random.h"
 #include "objective.h"
+#include "tourney.h"
 
 typedef static_vector<dest_t, dest_capacity> destorder_t;
 typedef static_vector<person_t, person_capacity> personorder_t;
 typedef static_vector<dest_t, capacitysum_capacity> slots_t;
+
+struct first_greater {
+    template <typename First, typename Second>
+    inline bool operator()(const std::pair<First, Second> & lhs, const std::pair<First, Second> & rhs) {
+	return lhs.first > rhs.first;
+    }
+};
+
+struct assignment_tournament {
+    static const size_t M = 2;
+    typedef std::pair<weight_t, std::shared_ptr<assignment_t> > item_type;
+    tournament_tree<item_type, M, first_greater> tree;
+    size_t remaining;
+
+    inline assignment_tournament()
+	: tree(std::make_pair(static_cast<weight_t>(0), std::shared_ptr<assignment_t>()))
+	, remaining(M)
+    {
+    }
+
+    inline void insert(weight_t w, const assignment_t & assignment) {
+	if (remaining) {
+	    tree.push(std::make_pair(w, new assignment_t(assignment)));
+	    --remaining;
+	    return;
+	}
+	if (tree.top().first > w) {
+	    return;
+	}
+	tree.replace_top(std::make_pair(w, new assignment_t(assignment)));
+    }
+
+    inline std::shared_ptr<assignment_t> pop() {
+	std::shared_ptr<assignment_t> best = tree.top().second;
+	tree.pop();
+	++remaining;
+	return best;
+    }
+
+};
 
 struct permuter_t {
     inline permuter_t(const input_t & input) : input(input), _exhausted(false) {
@@ -132,7 +173,7 @@ struct solver_t {
 
 void optimize(assignment_t & base) {
     //std::cout << '\n';
-    weight_t w = obj(input, base);
+    //weight_t w = obj(input, base);
     //std::cout << "\nLocally optimizing " << base.hash() << '/' << w << " -> " << std::flush;
     //locally_optimize(base);
     //w = obj(input, base);
@@ -140,7 +181,7 @@ void optimize(assignment_t & base) {
     assignment_t first = base;
     assignment_t second = base;
     permuter_t p(input);
-    find_best(base, p, first, second, w, w);
+    find_best(base, p, first, second);
     //{
     //weight_t w1 = obj(input, first);
     //weight_t w2 = obj(input, second);
@@ -177,20 +218,16 @@ void locally_optimize(assignment_t & best) {
     }
 }
 
-void find_best(assignment_t & base, permuter_t & p, assignment_t & first, assignment_t & second, weight_t firstv, weight_t secondv, bool swap = false) {
+void find_best(assignment_t & base, permuter_t & p, assignment_t & first, assignment_t & second) {
+    assignment_tournament t;
     while (!p.exhausted()) {
 	assignment_t solution = base;
 	p(solution);
 	weight_t solv = obj(input, solution);
-	if (solv > firstv) {
-	    second = solution;
-	    return find_best(base, p, second, first, solv, firstv, !swap);
-	} else if (solv > secondv) {
-	    second = solution;
-	    return find_best(base, p, first, second, firstv, solv, swap);
-	}
+	t.insert(solv, solution);
     }
-    if (swap) std::swap(first, second);
+    first = *(t.pop());
+    second = *(t.pop());
 }
 
 void go() {
