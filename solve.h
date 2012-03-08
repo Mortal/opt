@@ -24,8 +24,8 @@ struct first_greater {
     }
 };
 
+template <size_t M>
 struct assignment_tournament {
-    static const size_t M = 2;
     typedef std::pair<weight_t, std::shared_ptr<assignment_t> > item_type;
     tournament_tree<item_type, M, first_greater> tree;
     size_t remaining;
@@ -55,6 +55,13 @@ struct assignment_tournament {
 	return best;
     }
 
+    template <typename OutputIterator>
+    OutputIterator uninitialized_copy_to(OutputIterator i) {
+	for (auto j = tree.begin(); j != tree.end(); ++j) {
+	    new (i++) assignment_t(*(j->second));
+	}
+	return i;
+    }
 };
 
 struct permuter_t {
@@ -178,25 +185,27 @@ void optimize(assignment_t & base) {
     //locally_optimize(base);
     //w = obj(input, base);
     //std::cout << base.hash() << '/' << w << std::endl;
-    assignment_t first = base;
-    assignment_t second = base;
+    static const size_t k = 16;
+    char cbest[k*sizeof(assignment_t)];
+    assignment_t * best = reinterpret_cast<assignment_t *>(cbest);
     permuter_t p(input);
-    find_best(base, p, first, second);
+    find_best<k>(base, p, best);
     //{
     //weight_t w1 = obj(input, first);
     //weight_t w2 = obj(input, second);
     //std::cout << "Optimizing yields " << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << " -> " << std::flush;
     //}
-    locally_optimize(first);
-    locally_optimize(second);
-    weight_t w1 = obj(input, first);
-    weight_t w2 = obj(input, second);
-    //std::cout << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << std::endl;
-    if (w1 > w2) {
-	base = first;
-    } else {
-	base = second;
+    weight_t wb = 0;
+    size_t ib = 0;
+    for (size_t i = 0; i < k; ++i) {
+	locally_optimize(best[i]);
+	weight_t w = obj(input, best[i]);
+	if (w > wb) {
+	    wb = w;
+	    ib = i;
+	}
     }
+    base = best[ib];
 }
 
 void locally_optimize(assignment_t & best) {
@@ -218,16 +227,16 @@ void locally_optimize(assignment_t & best) {
     }
 }
 
-void find_best(assignment_t & base, permuter_t & p, assignment_t & first, assignment_t & second) {
-    assignment_tournament t;
+template <size_t k>
+void find_best(assignment_t & base, permuter_t & p, assignment_t * output) {
+    assignment_tournament<k> t;
     while (!p.exhausted()) {
 	assignment_t solution = base;
 	p(solution);
 	weight_t solv = obj(input, solution);
 	t.insert(solv, solution);
     }
-    first = *(t.pop());
-    second = *(t.pop());
+    t.uninitialized_copy_to(output);
 }
 
 void go() {
