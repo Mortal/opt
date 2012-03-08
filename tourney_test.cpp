@@ -4,6 +4,7 @@
 #include <queue>
 #include <ctime>
 #include "tourney.h"
+#include "stream_max.h"
 
 template <typename Q>
 struct replacer;
@@ -19,6 +20,14 @@ template <typename T>
 struct replacer<std::priority_queue<T> > {
     static void replace_top(std::priority_queue<T> * q, const T & el) {
 	q->pop();
+	q->push(el);
+    }
+};
+
+template <typename Q>
+struct replacer {
+    template <typename T>
+    static void replace_top(Q * q, const T & el) {
 	q->push(el);
     }
 };
@@ -107,7 +116,10 @@ int main(int argc, char ** argv) {
 	return speed_test_2<std::priority_queue<size_t>, n, m>();
 
     else if (arg == "tourney_speed_2")
-	return speed_test<tournament_tree<size_t, n>, n, m>();
+	return speed_test_2<tournament_tree<size_t, m>, n, m>();
+
+    else if (arg == "list_speed_2")
+	return speed_test_2<streaming_max<size_t, m>, n, m>();
 
     else if (arg == "correctness")
 	return test_correctness<n, k>();
