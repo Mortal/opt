@@ -115,26 +115,27 @@ private:
 	    if (d < dest_count-1) {
 		++d;
 	    } else {
-		++p;
 		d = 0;
+		if (++p >= person_count) return inc();
 	    }
-	} if (p1 < person_count) {
+	} else if (p1 < person_count) {
 	    if (p2 < person_count-1) {
 		++p2;
 	    } else {
-		++p1;
 		p2 = 0;
+		if (++p1 >= person_count) return inc();
 	    }
 	} else if (d1 < dest_count) {
 	    if (d2 < dest_count-1) {
 		++d2;
 	    } else {
-		++d1;
 		d2 = 0;
+		if (++d1 >= dest_count) return inc();
 	    }
 	} else {
 	    _exhausted = true;
 	}
+	//std::cout << p << ' ' << d << ' ' << p1 << ' ' << p2 << ' ' << d1 << ' ' << d2 << std::endl;
     }
 };
 
