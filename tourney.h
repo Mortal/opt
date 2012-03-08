@@ -5,30 +5,30 @@
 #include <boost/integer/static_log2.hpp>
 #include <limits>
 
-template <typename entry_type, size_t Round>
+template <typename T, size_t Round>
 struct tournament_tree_round;
 
-template <typename entry_type>
-struct tournament_tree_round<entry_type, 0> {
+template <typename T>
+struct tournament_tree_round<T, 0> {
     static const size_t contestants = 1;
 
-    inline void insert(const entry_type & entry) {
+    inline void insert(const T & entry) {
 	m_entry = entry;
     }
 
-    inline const entry_type & winner() {
+    inline const T & winner() {
 	return m_entry;
     }
 
-    inline void set(size_t /*index*/, const entry_type & entry) {
+    inline void set(size_t /*index*/, const T & entry) {
 	m_entry = entry;
     }
 
 private:
-    entry_type m_entry;
+    T m_entry;
 };
 
-template <typename entry_type, size_t Round>
+template <typename T, size_t Round>
 struct tournament_tree_round {
     static const size_t contestants = 1 << Round;
 
@@ -37,17 +37,17 @@ struct tournament_tree_round {
     {
     }
 
-    inline void insert(const entry_type & entry) {
+    inline void insert(const T & entry) {
 	m_entries[next_contestant++] = entry;
 	if (next_contestant & 1) return;
 	inner.insert(std::max(m_entries[next_contestant-2], entry));
     }
 
-    inline const entry_type & winner() {
+    inline const T & winner() {
 	return inner.winner();
     }
 
-    inline void set(size_t index, const entry_type & entry) {
+    inline void set(size_t index, const T & entry) {
 	assert(index < contestants);
 	m_entries[index] = entry;
 	size_t other = index ^ (index & 1);
@@ -56,8 +56,8 @@ struct tournament_tree_round {
 
 private:
     size_t next_contestant;
-    entry_type m_entries[contestants];
-    tournament_tree_round<entry_type, Round-1> inner;
+    T m_entries[contestants];
+    tournament_tree_round<T, Round-1> inner;
 };
 
 template <typename Key, size_t Capacity>
