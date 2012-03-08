@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <boost/integer/static_log2.hpp>
+#include <limits>
 
 template <typename Key, typename Value, size_t Round>
 struct tournament_tree_round;
@@ -18,6 +19,10 @@ struct tournament_tree_round<Key, Value, 0> {
 
     inline const entry_type & winner() {
 	return m_entry;
+    }
+
+    inline void set(size_t /*index*/, const entry_type & entry) {
+	m_entry = entry;
     }
 
 private:
@@ -44,6 +49,16 @@ struct tournament_tree_round {
 	return inner.winner();
     }
 
+    inline void set(size_t index, const entry_type & entry) {
+	if (index >= contestants) {
+	    std::cout << "Level " << Round << ": " << index << " >= " << contestants << std::endl;
+	}
+	assert(index < contestants);
+	m_entries[index] = entry;
+	size_t other = index ^ (index & 1);
+	inner.set(index >> 1, std::max(m_entries[index], m_entries[other]));
+    }
+
 private:
     size_t next_contestant;
     entry_type m_entries[contestants];
@@ -53,17 +68,41 @@ private:
 template <typename Key, typename Value, size_t Capacity>
 struct tournament_tree {
     static const size_t rounds = boost::static_log2<Capacity-1>::value+1;
+    typedef size_t inner_value;
+
+    inline Key worst() {
+	return std::numeric_limits<Key>::min();
+    }
+
+    inline tournament_tree()
+	: next_contestant(0)
+	, values(Capacity)
+    {
+    }
 
     inline void insert(const Key & k, const Value & v) {
-	inner.insert(std::make_pair(k,v));
+	inner.insert(std::make_pair(k,next_contestant));
+	values[next_contestant++] = v;
     }
 
     inline const Value & winner() {
-	return inner.winner().second;
+	size_t idx = winner_index();
+	return values[idx];
+    }
+
+    inline void pop_winner() {
+	size_t index = winner_index();
+	inner.set(index, std::make_pair(worst(), index));
     }
 
 private:
-    tournament_tree_round<Key, Value, rounds> inner;
+    size_t next_contestant;
+    tournament_tree_round<Key, inner_value, rounds> inner;
+    std::vector<Value> values;
+
+    inline size_t winner_index() {
+	return inner.winner().second;
+    }
 };
 
 #endif // __TOURNEY_H__
