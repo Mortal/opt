@@ -86,10 +86,11 @@ struct cout_reporter {
 	    pgs[p] = new (gs+p) goodness_calculation(prio, dest, condition, actual_roomies);
 	}
 	std::sort(pgs+0, pgs+person_count, ptrless());
-	for (person_t p = 0; p < person_count; ++p) {
-	    const goodness_calculation & c = *pgs[p];
+	for (person_t pp = 0; pp < person_count; ++pp) {
+	    person_t p = pgs[pp]-gs;
+	    const goodness_calculation & c = gs[p];
 	    dest_t dest = solution[p];
-	    std::cout << std::setw(6) << pgs[p]-gs << " &";
+	    std::cout << std::setw(6) << p << " &";
 	    if (dest%4)
 		std::cout << std::setw(2) << (4+dest/4) << '-' << dest%4 << ' ';
 	    else
