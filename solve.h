@@ -182,23 +182,12 @@ struct solver_t {
 	}
     }
 
-weight_t optimize(assignment_t & base) {
-    //std::cout << '\n';
-    //weight_t w = obj(input, base);
-    //std::cout << "\nLocally optimizing " << base.hash() << '/' << w << " -> " << std::flush;
-    //locally_optimize(base);
-    //w = obj(input, base);
-    //std::cout << base.hash() << '/' << w << std::endl;
+inline weight_t optimize(assignment_t & base) {
     static const size_t k = 16;
     char cbest[k*sizeof(assignment_t)];
     assignment_t * best = reinterpret_cast<assignment_t *>(cbest);
     permuter_t p(input);
     find_best<k>(base, p, best);
-    //{
-    //weight_t w1 = obj(input, first);
-    //weight_t w2 = obj(input, second);
-    //std::cout << "Optimizing yields " << first.hash() << '/' << w1 << " and " << second.hash() << '/' << w2 << " -> " << std::flush;
-    //}
     weight_t wb = 0;
     size_t ib = 0;
     for (size_t i = 0; i < k; ++i) {
@@ -213,7 +202,7 @@ weight_t optimize(assignment_t & base) {
     return wb;
 }
 
-void locally_optimize(assignment_t & best) {
+inline void locally_optimize(assignment_t & best) {
     weight_t best_value = obj(input, best);
     bool improvement = true;
     while (improvement) {
