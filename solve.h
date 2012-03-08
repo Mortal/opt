@@ -62,6 +62,10 @@ struct assignment_tournament {
 	}
 	return i;
     }
+
+    inline weight_t top_weight() {
+	return tree.top().first;
+    }
 };
 
 struct permuter_t {
