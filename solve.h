@@ -186,13 +186,24 @@ inline weight_t optimize(assignment_t & base) {
     static const size_t k = 16;
     char cbest[k*sizeof(assignment_t)];
     assignment_t * best = reinterpret_cast<assignment_t *>(cbest);
+
     permuter_t p(input);
-    find_best<k>(base, p, best);
+    assignment_tournament<k> t;
+    while (!p.exhausted()) {
+	assignment_t solution = base;
+	p(solution);
+	weight_t solv = obj(input, solution);
+	++rep;
+	t.insert(solv, solution);
+    }
+    t.uninitialized_copy_to(best);
+
     weight_t wb = 0;
     size_t ib = 0;
     for (size_t i = 0; i < k; ++i) {
 	locally_optimize(best[i]);
 	weight_t w = obj(input, best[i]);
+	++rep;
 	if (w > wb) {
 	    wb = w;
 	    ib = i;
@@ -204,6 +215,7 @@ inline weight_t optimize(assignment_t & base) {
 
 inline void locally_optimize(assignment_t & best) {
     weight_t best_value = obj(input, best);
+    ++rep;
     bool improvement = true;
     while (improvement) {
 	improvement = false;
@@ -212,6 +224,7 @@ inline void locally_optimize(assignment_t & best) {
 	    assignment_t solution = best;
 	    p(solution);
 	    weight_t goodness = obj(input, solution);
+	    ++rep;
 	    if (goodness > best_value) {
 		best_value = goodness;
 		best = solution;
@@ -221,22 +234,11 @@ inline void locally_optimize(assignment_t & best) {
     }
 }
 
-template <size_t k>
-void find_best(assignment_t & base, permuter_t & p, assignment_t * output) {
-    assignment_tournament<k> t;
-    while (!p.exhausted()) {
-	assignment_t solution = base;
-	p(solution);
-	weight_t solv = obj(input, solution);
-	t.insert(solv, solution);
-    }
-    t.uninitialized_copy_to(output);
-}
-
 inline void find_good(assignment_t & target) {
     const size_t iterations = 50000;
     assignment_t solution = target;
     weight_t best = obj(input, solution);
+    ++rep;
     for (size_t i = 0; i < iterations; ++i) {
 	shuffle(solution);
 	++rep;
