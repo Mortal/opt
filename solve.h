@@ -233,11 +233,13 @@ void find_best(assignment_t & base, permuter_t & p, assignment_t * output) {
     t.uninitialized_copy_to(output);
 }
 
-inline void find_good(assignment_t & target, size_t iterations) {
+inline void find_good(assignment_t & target) {
+    const size_t iterations = 50000;
     assignment_t solution = target;
     weight_t best = obj(input, solution);
     for (size_t i = 0; i < iterations; ++i) {
 	shuffle(solution);
+	++rep;
 	weight_t w = obj(input, solution);
 	if (w > best) {
 	    target = solution;
@@ -246,15 +248,17 @@ inline void find_good(assignment_t & target, size_t iterations) {
     }
 }
 
+inline weight_t find_better(assignment_t & target) {
+    find_good(target);
+    return optimize(target);
+}
+
 void go() {
     weight_t best_value = 0;
     rep.start();
 
     while (true) {
-	const size_t iterations = 50000;
-	find_good(solution, iterations);
-	rep += iterations;
-	weight_t goodness = optimize(solution);
+	weight_t goodness = find_better(solution);
 	if (goodness > best_value) {
 	    best_value = goodness;
 	    rep(input, solution, goodness);
