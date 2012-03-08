@@ -32,7 +32,7 @@ struct parallel_buffer {
 
     inline void send_result(const parallel_result & source) {
 	boost::unique_lock<boost::mutex> lock(m);
-	if (held_result.get() && source.goodness <= held_result->goodness) return;
+	if (held_result.get() && source.goodness < held_result->goodness) return;
 	held_result.reset(new parallel_result(source));
 	cond.notify_one();
 	lock.unlock();
