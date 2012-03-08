@@ -5,12 +5,11 @@
 #include <boost/integer/static_log2.hpp>
 #include <limits>
 
-template <typename Key, typename Value, size_t Round>
+template <typename entry_type, size_t Round>
 struct tournament_tree_round;
 
-template <typename Key, typename Value>
-struct tournament_tree_round<Key, Value, 0> {
-    typedef std::pair<Key, Value> entry_type;
+template <typename entry_type>
+struct tournament_tree_round<entry_type, 0> {
     static const size_t contestants = 1;
 
     inline void insert(const entry_type & entry) {
@@ -29,9 +28,8 @@ private:
     entry_type m_entry;
 };
 
-template <typename Key, typename Value, size_t Round>
+template <typename entry_type, size_t Round>
 struct tournament_tree_round {
-    typedef std::pair<Key, Value> entry_type;
     static const size_t contestants = 1 << Round;
 
     inline tournament_tree_round()
@@ -59,7 +57,7 @@ struct tournament_tree_round {
 private:
     size_t next_contestant;
     entry_type m_entries[contestants];
-    tournament_tree_round<Key, Value, Round-1> inner;
+    tournament_tree_round<entry_type, Round-1> inner;
 };
 
 template <typename Key, size_t Capacity>
@@ -93,7 +91,7 @@ struct tournament_tree {
 
 private:
     size_t next_contestant;
-    tournament_tree_round<Key, index_t, rounds> inner;
+    tournament_tree_round<std::pair<Key, index_t>, rounds> inner;
     Key values[Capacity];
 
     inline size_t winner_index() {
