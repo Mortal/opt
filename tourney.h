@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <boost/integer/static_log2.hpp>
 #include <limits>
+#include <iostream>
+#include <iomanip>
 
 template <typename T, size_t Round>
 struct tournament_tree_round;
@@ -22,6 +24,15 @@ struct tournament_tree_round<T, 0> {
 
     inline void set(size_t /*index*/, const T & entry) {
 	m_entry = entry;
+    }
+
+    inline void printline(size_t) {
+	std::cout << std::setw(16) << m_entry.first;
+    }
+
+    inline void print() {
+	printline();
+	std::cout << std::endl;
     }
 
 private:
@@ -50,8 +61,21 @@ struct tournament_tree_round {
     inline void set(size_t index, const T & entry) {
 	assert(index < contestants);
 	m_entries[index] = entry;
-	size_t other = index ^ (index & 1);
+	size_t other = index ^ 1;
 	inner.set(index >> 1, std::max(m_entries[index], m_entries[other]));
+    }
+
+    inline void printline(size_t index) {
+	std::cout << std::setw(16) << m_entries[index].first;
+	if (index & 1) return;
+	inner.printline(index >> 1);
+    }
+
+    inline void print() {
+	for (size_t i = 0; i < contestants; ++i) {
+	    printline(i);
+	    std::cout << std::endl;
+	}
     }
 
 private:
@@ -88,6 +112,10 @@ struct tournament_tree {
     inline void pop() {
 	size_t index = winner_index();
 	inner.set(index, std::make_pair(worst(), index));
+    }
+
+    inline void print() {
+	inner.print();
     }
 
 private:
