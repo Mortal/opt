@@ -50,9 +50,6 @@ struct tournament_tree_round {
     }
 
     inline void set(size_t index, const entry_type & entry) {
-	if (index >= contestants) {
-	    std::cout << "Level " << Round << ": " << index << " >= " << contestants << std::endl;
-	}
 	assert(index < contestants);
 	m_entries[index] = entry;
 	size_t other = index ^ (index & 1);
