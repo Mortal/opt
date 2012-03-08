@@ -37,6 +37,7 @@ struct assignment_tournament {
     }
 
     inline void insert(weight_t w, const assignment_t & assignment) {
+	assert(remaining <= M);
 	if (remaining) {
 	    tree.push(std::make_pair(w, new assignment_t(assignment)));
 	    --remaining;
