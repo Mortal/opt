@@ -62,10 +62,10 @@ private:
     tournament_tree_round<Key, Value, Round-1> inner;
 };
 
-template <typename Key, typename Value, size_t Capacity>
+template <typename Key, size_t Capacity>
 struct tournament_tree {
     static const size_t rounds = boost::static_log2<Capacity-1>::value+1;
-    typedef size_t inner_value;
+    typedef size_t index_t;
 
     inline Key worst() {
 	return std::numeric_limits<Key>::min();
@@ -73,29 +73,28 @@ struct tournament_tree {
 
     inline tournament_tree()
 	: next_contestant(0)
-	, values(Capacity)
     {
     }
 
-    inline void insert(const Key & k, const Value & v) {
+    inline void push(const Key & k) {
 	inner.insert(std::make_pair(k,next_contestant));
-	values[next_contestant++] = v;
+	values[next_contestant++] = k;
     }
 
-    inline const Value & winner() {
+    inline const Key & top() {
 	size_t idx = winner_index();
 	return values[idx];
     }
 
-    inline void pop_winner() {
+    inline void pop() {
 	size_t index = winner_index();
 	inner.set(index, std::make_pair(worst(), index));
     }
 
 private:
     size_t next_contestant;
-    tournament_tree_round<Key, inner_value, rounds> inner;
-    std::vector<Value> values;
+    tournament_tree_round<Key, index_t, rounds> inner;
+    Key values[Capacity];
 
     inline size_t winner_index() {
 	return inner.winner().second;
