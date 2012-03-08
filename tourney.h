@@ -7,11 +7,11 @@
 #include <iostream>
 #include <iomanip>
 
-template <typename T, size_t Round>
+template <typename T, size_t Round, typename Compare>
 struct tournament_tree_round;
 
-template <typename T>
-struct tournament_tree_round<T, 0> {
+template <typename T, typename Compare>
+struct tournament_tree_round<T, 0, Compare> {
     static const size_t contestants = 1;
 
     inline void insert(const T & entry) {
@@ -39,7 +39,7 @@ private:
     T m_entry;
 };
 
-template <typename T, size_t Round>
+template <typename T, size_t Round, typename Compare>
 struct tournament_tree_round {
     static const size_t contestants = 1 << Round;
 
@@ -51,7 +51,7 @@ struct tournament_tree_round {
     inline void insert(const T & entry) {
 	m_entries[next_contestant++] = entry;
 	if (next_contestant & 1) return;
-	inner.insert(std::max(m_entries[next_contestant-2], entry));
+	inner.insert(max(m_entries[next_contestant-2], entry));
     }
 
     inline const T & winner() {
@@ -62,7 +62,7 @@ struct tournament_tree_round {
 	assert(index < contestants);
 	m_entries[index] = entry;
 	size_t other = index ^ 1;
-	inner.set(index >> 1, std::max(m_entries[index], m_entries[other]));
+	inner.set(index >> 1, max(m_entries[index], m_entries[other]));
     }
 
     inline void printline(size_t index) {
@@ -81,16 +81,28 @@ struct tournament_tree_round {
 private:
     size_t next_contestant;
     T m_entries[contestants];
-    tournament_tree_round<T, Round-1> inner;
+    tournament_tree_round<T, Round-1, Compare> inner;
+
+    inline const T & max(const T & lhs, const T & rhs) {
+	return Compare()(lhs, rhs) ? rhs : lhs;
+    }
 };
 
-template <typename T, size_t Capacity>
+template <typename Compare>
+struct compare_first {
+    template <typename First, typename Second>
+    inline bool operator()(const std::pair<First, Second> & lhs, const std::pair<First, Second> & rhs) {
+	return Compare()(lhs.first, rhs.first);
+    }
+};
+
+template <typename T, size_t Capacity, typename Compare = std::less<T> >
 struct tournament_tree {
     static const size_t rounds = boost::static_log2<Capacity-1>::value+1;
     typedef size_t index_t;
 
     inline T worst() {
-	return std::numeric_limits<T>::min();
+	return m_worst;
     }
 
     inline tournament_tree(const T & worst = std::numeric_limits<T>::min())
@@ -125,7 +137,7 @@ struct tournament_tree {
 
 private:
     size_t next_contestant;
-    tournament_tree_round<std::pair<T, index_t>, rounds> inner;
+    tournament_tree_round<std::pair<T, index_t>, rounds, compare_first<Compare> > inner;
     T values[Capacity];
     T m_worst;
 
