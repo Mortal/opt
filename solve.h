@@ -182,7 +182,7 @@ struct solver_t {
 	}
     }
 
-void optimize(assignment_t & base) {
+weight_t optimize(assignment_t & base) {
     //std::cout << '\n';
     //weight_t w = obj(input, base);
     //std::cout << "\nLocally optimizing " << base.hash() << '/' << w << " -> " << std::flush;
@@ -210,6 +210,7 @@ void optimize(assignment_t & base) {
 	}
     }
     base = best[ib];
+    return wb;
 }
 
 void locally_optimize(assignment_t & best) {
@@ -243,37 +244,33 @@ void find_best(assignment_t & base, permuter_t & p, assignment_t * output) {
     t.uninitialized_copy_to(output);
 }
 
+inline void find_good(assignment_t & target, size_t iterations) {
+    assignment_t solution = target;
+    weight_t best = obj(input, solution);
+    for (size_t i = 0; i < iterations; ++i) {
+	shuffle(solution);
+	weight_t w = obj(input, solution);
+	if (w > best) {
+	    target = solution;
+	    best = w;
+	}
+    }
+}
+
 void go() {
     weight_t best_value = 0;
-    assignment_t best_unoptimized = solution;
-    weight_t best_unoptimized_value = 0;
-    size_t since_last = 0;
     rep.start();
 
     while (true) {
-	weight_t goodness;
-	const size_t threshold = 50000;
-	if (since_last >= threshold) {
-	    solution = best_unoptimized;
-	    optimize(solution);
-	    since_last = 0;
-	    goodness = obj(input, solution);
-	    best_unoptimized_value = 0;
-	} else {
-	    shuffle(solution);
-	    ++since_last;
-	    goodness = obj(input, solution);
-	    if (goodness > best_unoptimized_value) {
-		best_unoptimized = solution;
-		best_unoptimized_value = goodness;
-	    }
-	}
-	++rep;
+	const size_t iterations = 50000;
+	find_good(solution, iterations);
+	rep += iterations;
+	weight_t goodness = optimize(solution);
 	if (goodness > best_value) {
 	    best_value = goodness;
 	    rep(input, solution, goodness);
-	    since_last = 0;
 	}
+	shuffle(solution);
     }
 }
 
