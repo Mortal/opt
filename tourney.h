@@ -78,6 +78,9 @@ struct tournament_tree_round {
 	}
     }
 
+    inline const T * begin() const { return m_entries + 0; }
+    inline const T * end()   const { return m_entries + contestants; }
+
 private:
     size_t next_contestant;
     T m_entries[contestants];
@@ -96,10 +99,32 @@ struct compare_first {
     }
 };
 
+template <typename T, size_t Capacity, typename Compare>
+struct tournament_tree_iter_base {
+    tournament_tree_iter_base(const std::pair<T, size_t> * from)
+	: it(from)
+    {
+    }
+
+    const T & operator*()  const { return it->first; }
+    const T * operator->() const { return &(it->first); }
+    void operator++() { ++it; }
+    void operator++(int) { it++; }
+    bool operator==(const tournament_tree_iter_base & other) const {
+	return it == other.it;
+    }
+    bool operator!=(const tournament_tree_iter_base & other) const {
+	return !(*this == other);
+    }
+private:
+    const std::pair<T, size_t> * it;
+};
+
 template <typename T, size_t Capacity, typename Compare = std::less<T> >
 struct tournament_tree {
     static const size_t rounds = boost::static_log2<Capacity-1>::value+1;
     typedef size_t index_t;
+    typedef tournament_tree_iter_base<T, Capacity, Compare> iter_base;
 
     inline T worst() {
 	return m_worst;
@@ -135,6 +160,9 @@ struct tournament_tree {
 	inner.set(index, std::make_pair(k, index));
     }
 
+    inline iter_base begin() const { return inner.begin(); }
+    inline iter_base end()   const { return inner.end(); }
+
 private:
     size_t next_contestant;
     tournament_tree_round<std::pair<T, index_t>, rounds, compare_first<Compare> > inner;
@@ -145,6 +173,13 @@ private:
 	return inner.winner().second;
     }
 };
+
+namespace std {
+    template <typename T, size_t Capacity, typename Compare>
+    struct iterator_traits<tournament_tree_iter_base<T, Capacity, Compare> > {
+	typedef T value_type;
+    };
+}
 
 #endif // __TOURNEY_H__
 // vim: set sw=4 sts=4 ts=8 noet:
