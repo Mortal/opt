@@ -238,8 +238,7 @@ inline void locally_optimize(assignment_t & best) {
 inline void find_good(assignment_t & target) {
     const size_t iterations = 50000;
     assignment_t solution = target;
-    weight_t best = obj(input, solution);
-    ++rep;
+    weight_t best = 0;
     for (size_t i = 0; i < iterations; ++i) {
 	shuffle(solution);
 	++rep;
@@ -252,21 +251,25 @@ inline void find_good(assignment_t & target) {
 }
 
 inline weight_t find_better(assignment_t & target) {
-    find_good(target);
-    return optimize(target);
-}
-
-void go() {
     weight_t best_value = 0;
-    rep.start();
-
-    while (true) {
-	weight_t goodness = find_better(solution);
+    for (size_t i = 0; i < 20; ++i) {
+	assignment_t solution = target;
+	find_good(solution);
+	weight_t goodness = optimize(solution);
 	if (goodness > best_value) {
 	    best_value = goodness;
 	    rep(input, solution, goodness);
+	    target = solution;
 	}
-	shuffle(solution);
+    }
+    return best_value;
+}
+
+void go() {
+    rep.start();
+
+    while (true) {
+	find_better(solution);
     }
 }
 
