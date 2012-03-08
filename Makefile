@@ -14,12 +14,15 @@ LDFLAGS=-lboost_system -lboost_timer -lboost_thread
 opt: opt.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
-all: opt test geninput
+all: opt test geninput tourney_test
 
 test: test.o random.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
 geninput: geninput.o
+	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
+
+tourney_test: tourney_test.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
 %.o: %.cpp
@@ -31,5 +34,7 @@ geninput.o: geninput.cpp
 
 test.o: test.cpp solve.h types.h random.h objective.h assignment.h
 
+tourney_test.o: tourney_test.cpp tourney.h
+
 clean:
-	$(RM) opt test geninput opt.o random.o test.o geninput.o
+	$(RM) opt test geninput opt.o random.o test.o geninput.o tourney_test.o
