@@ -22,10 +22,7 @@ LDFLAGS+=-lboost_system -lboost_chrono -lboost_timer -lboost_thread
 opt: opt.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
-all: opt test geninput tourney_test
-
-test: test.o random.o
-	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
+all: opt geninput tourney_test
 
 geninput: geninput.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
@@ -39,8 +36,6 @@ tourney_test: tourney_test.o
 opt.o: opt.cpp assignment.h io.h objective.h parallel.h random.h solve.h types.h
 
 geninput.o: geninput.cpp
-
-test.o: test.cpp solve.h types.h random.h objective.h assignment.h
 
 tourney_test.o: tourney_test.cpp tourney.h
 
