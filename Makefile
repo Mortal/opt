@@ -1,4 +1,6 @@
 CXX=g++
+CXXFLAGS=
+LDFLAGS=
 ifeq ($(DEBUG),)
 	CXXFLAGS=-O3
 else
@@ -8,8 +10,14 @@ else
 		CXXFLAGS=-pg
 	endif
 endif
+
+ifneq ($(BOOST_ROOT),)
+	CXXFLAGS+=-I$(BOOST_ROOT)/include
+	LDFLAGS+=-L$(BOOST_ROOT)/lib -Wl,-rpath=$(BOOST_ROOT)/lib
+endif
+
 CXXFLAGS+=-Wall -Wextra --std=gnu++0x
-LDFLAGS=-lboost_system -lboost_timer -lboost_thread
+LDFLAGS+=-lboost_system -lboost_chrono -lboost_timer -lboost_thread
 
 opt: opt.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
