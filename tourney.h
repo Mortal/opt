@@ -9,6 +9,12 @@
 
 typedef size_t index_t;
 
+template <typename T, typename Compare>
+struct tournament_tree_printer;
+
+template <typename T, size_t Round, typename Compare, size_t Capacity>
+struct lineprinter;
+
 template <typename T, size_t Round, typename Compare, size_t Capacity>
 struct tournament_tree_round;
 
@@ -54,6 +60,7 @@ struct tournament_tree_round<T, 0, Compare, Capacity> {
 private:
     T keys[Capacity];
     index_t m_entry;
+    friend struct lineprinter<T, 0, Compare, Capacity>;
 };
 
 template <typename T, size_t Round, typename Compare, size_t Capacity>
@@ -89,19 +96,6 @@ struct tournament_tree_round {
 	return inner.max(lhs, rhs);
     }
 
-    inline void printline(size_t index) {
-	std::cout << std::setw(16) << key(m_entries[index]);
-	if (index & 1) return;
-	inner.printline(index >> 1);
-    }
-
-    inline void print() {
-	for (size_t i = 0; i < contestants; ++i) {
-	    printline(i);
-	    std::cout << std::endl;
-	}
-    }
-
     inline const T & key(index_t index) const { return inner.key(index); }
 
     inline const T * begin() const { return inner.begin(); }
@@ -111,6 +105,8 @@ private:
     size_t next_contestant;
     index_t m_entries[contestants];
     tournament_tree_round<T, Round-1, Compare, Capacity> inner;
+
+    friend struct lineprinter<T, Round, Compare, Capacity>;
 };
 
 template <typename T, size_t Capacity, typename Compare = std::less<T> >
@@ -144,10 +140,6 @@ struct tournament_tree {
 	inner.set(index, index);
     }
 
-    inline void print() {
-	inner.print();
-    }
-
     inline void replace_top(const T & k) {
 	index_t index = winner_index();
 	inner.set_key(index, k);
@@ -157,6 +149,11 @@ struct tournament_tree {
     inline const T * begin() const { return inner.begin(); }
     inline const T * end()   const { return inner.end(); }
 
+    void print() {
+	tournament_tree_printer<T, Compare> p;
+	p.print(*this);
+    }
+
 private:
     size_t next_contestant;
     tournament_tree_round<T, rounds, Compare, Capacity> inner;
@@ -165,7 +162,60 @@ private:
     inline index_t winner_index() {
 	return inner.winner().first;
     }
+
+    friend struct tournament_tree_printer<T, Compare>;
 };
+
+template <typename T, size_t Round, typename Compare, size_t Capacity>
+struct lineprinter {
+
+    static inline void printline(std::ostream & os, tournament_tree_round<T, Round, Compare, Capacity> & t, size_t index) {
+	os << std::setw(16) << t.key(t.m_entries[index]);
+	if (index & 1) return;
+	lineprinter<T, Round-1, Compare, Capacity>::printline(os, t.inner, index >> 1);
+    }
+
+};
+
+template <typename T, typename Compare, size_t Capacity>
+struct lineprinter<T, 0, Compare, Capacity> {
+
+    static inline void printline(std::ostream & os, tournament_tree_round<T, 0, Compare, Capacity> & t, size_t /*index*/) {
+	os << std::setw(16) << t.key(t.m_entry);
+    }
+
+};
+
+template <typename T, typename Compare>
+struct tournament_tree_printer {
+    inline tournament_tree_printer(std::ostream & os)
+	: os(os)
+    {
+    }
+
+    template <size_t Capacity>
+    inline void print(tournament_tree<T, Capacity, Compare> & t) {
+	print(t.inner);
+    }
+
+    template <size_t Round, size_t Capacity>
+    inline void print(tournament_tree_round<T, Round, Compare, Capacity> & t) {
+	for (size_t i = 0; i < t.contestants; ++i) {
+	    lineprinter<T, Round, Compare, Capacity>::printline(os, t, i);
+	    os << '\n';
+	}
+    }
+
+private:
+    std::ostream & os;
+};
+
+template <typename T, size_t Capacity, typename Compare>
+inline std::ostream & operator<<(std::ostream & os, tournament_tree<T, Capacity, Compare> & t) {
+    tournament_tree_printer<T, Compare> printer(os);
+    printer.print(t);
+    return os;
+}
 
 #endif // __TOURNEY_H__
 // vim: set sw=4 sts=4 ts=8 noet:
