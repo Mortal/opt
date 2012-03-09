@@ -96,6 +96,18 @@ int test_correctness() {
     return 0;
 }
 
+template <size_t n>
+int print_test() {
+    auto * tt = new tournament_tree<size_t, n>();
+    boost::mt19937 rng(time(NULL));
+    for (size_t i = 0; i < n; ++i) {
+	size_t v = rng();
+	tt->push(v);
+    }
+    std::cout << *tt << std::flush;
+    return 0;
+}
+
 int main(int argc, char ** argv) {
     const static size_t n = 1 << 25;
     const static size_t m = 128;
@@ -123,6 +135,9 @@ int main(int argc, char ** argv) {
 
     else if (arg == "correctness")
 	return test_correctness<n, k>();
+
+    else if (arg == "print")
+	return print_test<32>();
 
     std::cout << "Usage: " << argv[0] << " <pq_speed|tourney_speed|correctness>" << std::endl;
 }
