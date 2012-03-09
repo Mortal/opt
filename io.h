@@ -1,6 +1,7 @@
 #ifndef __IO_H__
 #define __IO_H__
 
+#include <boost/timer.hpp>
 #include <cstdlib>
 #include "types.h"
 
@@ -57,7 +58,7 @@ struct cout_reporter {
     }
 
     inline void start() {
-	t.start();
+	t.restart();
     }
 
     inline size_t operator++() { return ++attempts; }
@@ -71,7 +72,7 @@ struct cout_reporter {
 	size_t person_count = people.size();
 
 	std::cout << "\n\n";
-	std::cout << t.format();
+	std::cout << t.elapsed() << " s\n";
 	std::cout << "After " << attempts << " attempts in total." << std::endl;
 	std::cout << "Beboer & Gang & g_p & g_s & g_e & v_p & v_s & v_e &  G & Ønskede roomies \\\\" << std::endl;
 
@@ -113,7 +114,7 @@ struct cout_reporter {
     }
 
 private:
-    boost::timer::cpu_timer t;
+    boost::timer t;
     size_t attempts;
 
     struct ptrless {
@@ -133,7 +134,7 @@ struct debug_reporter {
     }
 
     inline void start() {
-	t.start();
+	t.restart();
     }
 
     inline void operator++() { inc(); }
@@ -145,8 +146,8 @@ struct debug_reporter {
     }
 
 private:
-    boost::timer::cpu_timer t;
-    boost::timer::nanosecond_type lasttime;
+    boost::timer t;
+    double lasttime;
     size_t lastattempts;
     size_t attempts;
     size_t nextreport;
@@ -155,10 +156,10 @@ private:
     inline void inc(size_t by = 1) {
 	attempts += by;
 	if (attempts > nextreport) {
-	    boost::timer::nanosecond_type now = t.elapsed().wall;
-	    boost::timer::nanosecond_type speed = (attempts-lastattempts)*(100000000>>10)/((now-lasttime)>>10);
-	    nextreport += speed;
-	    std::cout << '\r' << now << "ns\tbest = " << best << "\tattempts = " << attempts << "\tspeed = " << speed << std::flush;
+	    double now = t.elapsed();
+	    double speed = (attempts-lastattempts)/(now-lasttime);
+	    nextreport += 0.1*speed;
+	    std::cout << '\r' << now << "s\tbest = " << best << "\tattempts = " << attempts << "\tspeed = " << speed << std::flush;
 	    lastattempts = attempts;
 	    std::swap(now, lasttime);
 	}

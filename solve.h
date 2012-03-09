@@ -1,7 +1,7 @@
 #ifndef __SOLVE_H__
 #define __SOLVE_H__
 
-#include <boost/timer/timer.hpp>
+#include <boost/timer.hpp>
 #include <vector>
 #include <memory>
 #include <fstream>
