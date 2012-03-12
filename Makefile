@@ -45,4 +45,6 @@ tourney_test.o: tourney_test.cpp tourney.h
 tourneytime.o: tourneytime.cpp tourney.h speedtest.h
 
 clean:
-	$(RM) opt test geninput opt.o random.o test.o geninput.o tourney_test.o
+	$(RM) opt test geninput tourney_test tourneytime \
+		opt.o random.o test.o geninput.o tourney_test.o tourneytime.o \
+		personer.aux personer.log personer.pdf prioriteter.aux prioriteter.log prioriteter.pdf
