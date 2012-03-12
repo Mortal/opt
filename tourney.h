@@ -23,6 +23,11 @@ struct tournament_tree_round<T, 0, Compare, Capacity> {
     typedef std::pair<index_t, T> winner_type;
     static const size_t contestants = 1;
 
+    inline tournament_tree_round(Compare comp)
+	: comp(comp)
+    {
+    }
+
     inline winner_type winner() {
 	return std::make_pair(m_entry, keys[m_entry]);
     }
@@ -38,7 +43,7 @@ struct tournament_tree_round<T, 0, Compare, Capacity> {
     inline const T & key(index_t index) const { return keys[index]; }
 
     inline bool compare(index_t index1, index_t index2) const {
-	return Compare()(keys[index1], keys[index2]);
+	return comp(keys[index1], keys[index2]);
     }
 
     inline index_t max(index_t lhs, index_t rhs) const {
@@ -49,6 +54,7 @@ struct tournament_tree_round<T, 0, Compare, Capacity> {
     inline const T * end()   const { return keys+Capacity; }
 
 private:
+    Compare comp;
     T keys[Capacity];
     index_t m_entry;
     friend struct lineprinter<T, 0, Compare, Capacity>;
@@ -59,8 +65,9 @@ struct tournament_tree_round {
     typedef std::pair<index_t, T> winner_type;
     static const size_t contestants = 1 << Round;
 
-    inline tournament_tree_round()
+    inline tournament_tree_round(Compare comp)
 	: next_contestant(0)
+	, inner(comp)
     {
 	std::fill(m_entries+0, m_entries+contestants, 0);
     }
@@ -106,49 +113,105 @@ struct tournament_tree {
     static const size_t rounds = boost::static_log2<Capacity-1>::value+1;
     typedef size_t index_t;
 
+    struct key_comp {
+	inline key_comp(const T * keys)
+	    : keys(keys)
+	{
+	}
+	inline bool operator()(size_t lhs, size_t rhs) const {
+	    return Compare()(keys[lhs], keys[rhs]);
+	}
+    private:
+	const T * keys;
+    };
+
+    struct iterator_type {
+	inline iterator_type(const T * keys, size_t index)
+	    : keys(keys)
+	    , index(index)
+	{
+	}
+
+	inline bool operator==(const iterator_type & other) const { return other.keys == keys && other.index == index; }
+	inline bool operator!=(const iterator_type & other) const { return other.keys != keys || other.index != index; }
+	inline bool operator<(const iterator_type & other)  const { return index < other.index; }
+	inline iterator_type operator++(int) {
+	    ++index;
+	    return iterator_type(keys, index-1);
+	}
+	inline iterator_type operator++() {
+	    ++index;
+	    return *this;
+	}
+	inline const T & operator*() {
+	    return keys[index];
+	}
+	inline const T * operator->() {
+	    return keys+index;
+	}
+	inline iterator_type operator+(int i) {
+	    return iterator_type(keys, index + i);
+	}
+	inline iterator_type operator+=(int i) {
+	    index += i;
+	    return *this;
+	}
+
+    private:
+	const T * keys;
+	size_t index;
+    };
+
     inline T worst() {
 	return m_worst;
     }
 
     inline tournament_tree(const T & worst = std::numeric_limits<T>::min())
 	: next_contestant(0)
+	, inner(key_comp(keys))
 	, m_worst(worst)
     {
     }
 
     inline void push(const T & k) {
-	inner.set_key(next_contestant, k);
+	keys[next_contestant] = k;
+	inner.set_key(next_contestant, next_contestant);
 	inner.set(next_contestant, next_contestant);
 	++next_contestant;
     }
 
     inline T top() {
-	return inner.winner().second;
+	return keys[inner.winner().second];
     }
 
     inline void pop() {
 	size_t index = winner_index();
-	inner.set_key(index, worst());
+	keys[index] = worst();
+	inner.set_key(index, index);
 	inner.set(index, index);
     }
 
     inline void replace_top(const T & k) {
 	index_t index = winner_index();
-	inner.set_key(index, k);
+	keys[index] = k;
+	inner.set_key(index, index);
 	inner.set(index, index);
     }
 
-    inline const T * begin() const { return inner.begin(); }
-    inline const T * end()   const { return inner.end(); }
+    inline iterator_type begin() const { return iterator_type(keys, 0); }
+    inline iterator_type end()   const { return iterator_type(keys, Capacity); }
 
     void print() {
+	/*
 	tournament_tree_printer<T, Compare> p;
 	p.print(*this);
+	*/
     }
 
 private:
     size_t next_contestant;
-    tournament_tree_round<T, rounds, Compare, Capacity> inner;
+    T keys[Capacity];
+    tournament_tree_round<size_t, rounds, key_comp, Capacity> inner;
     T m_worst;
 
     inline index_t winner_index() {
