@@ -17,12 +17,12 @@ ifneq ($(BOOST_ROOT),)
 endif
 
 CXXFLAGS+=-Wall -Wextra --std=gnu++0x
-LDFLAGS+=-lboost_system -lboost_chrono -lboost_timer -lboost_thread -Wl,-rpath=/usr/local
+LDFLAGS+=-lboost_system -lboost_chrono -lboost_timer -lboost_thread
 
 opt: opt.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
-all: opt geninput tourney_test
+all: opt geninput tourney_test tourneytime
 
 geninput: geninput.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
