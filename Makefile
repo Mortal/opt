@@ -36,7 +36,7 @@ tourneytime: tourneytime.o
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-opt.o: opt.cpp assignment.h io.h objective.h parallel.h random.h solve.h types.h
+opt.o: opt.cpp assignment.h io.h objective.h parallel.h random.h solve.h tourney.h types.h
 
 geninput.o: geninput.cpp
 
