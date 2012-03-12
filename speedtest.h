@@ -112,3 +112,4 @@ struct speedtester {
 };
 
 #endif // __SPEEDTEST_H__
+// vim: set sw=4 sts=4 ts=4 noet:
