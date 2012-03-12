@@ -5,6 +5,7 @@
 #include "tourney.h"
 #include "speedtest.h"
 #include "stream_max.h"
+#include "static_heap.h"
 #include "replacer.h"
 
 typedef int32_t item_type;
@@ -37,30 +38,42 @@ double sample(Logger & logger, size_t samples = 4, double calibrate = 0.5, doubl
 	return n/tester.sample(n, samples, logger).mean();
 }
 
+static const size_t colwidth = 20;
+static const size_t headerwidth = 20;
+
 template <size_t Capacity, typename Results, typename Logger>
 void test(Results & results, Logger & logger) {
 	results << std::setw(4) << Capacity << std::flush;
 	{
 	double speed = sample<tournament_tree<item_type, Capacity>, Capacity>(logger);
-	logger << std::setw(20) << "Tournament tree: " << std::fixed << speed << " elements per second" << std::endl;
-	results << std::setw(16) << static_cast<int64_t>(speed) << std::flush;
+	logger << std::setw(headerwidth) << "Tournament tree: " << std::fixed << speed << " elements per second" << std::endl;
+	results << std::setw(colwidth) << static_cast<int64_t>(speed) << std::flush;
+	}
+	{
+	double speed = sample<static_heap<item_type, Capacity>, Capacity>(logger);
+	logger << std::setw(headerwidth) << "Static heap: " << std::fixed << speed << " elements per second" << std::endl;
+	results << std::setw(colwidth) << static_cast<int64_t>(speed) << std::flush;
 	}
 	{
 	double speed = sample<std::priority_queue<item_type>, Capacity>(logger);
-	logger << std::setw(20) << "Heap: " << std::fixed << speed << " elements per second" << std::endl;
-	results << std::setw(16) << static_cast<int64_t>(speed) << std::flush;
+	logger << std::setw(headerwidth) << "STL priority_queue: " << std::fixed << speed << " elements per second" << std::endl;
+	results << std::setw(colwidth) << static_cast<int64_t>(speed) << std::flush;
 	}
 	{
 	double speed = sample<streaming_max<item_type, Capacity>, Capacity>(logger);
-	logger << std::setw(20) << "Streaming max: " << std::fixed << speed << " elements per second" << std::endl;
-	results << std::setw(16) << static_cast<int64_t>(speed) << std::flush;
+	logger << std::setw(headerwidth) << "Streaming max: " << std::fixed << speed << " elements per second" << std::endl;
+	results << std::setw(colwidth) << static_cast<int64_t>(speed) << std::flush;
 	}
 	results << std::endl;
 }
 
 template <typename Results, typename Logger>
 void all_tests(Results & results, Logger & logger) {
-	results << "   k Tournament tree            Heap   Streaming max" << std::endl;
+	results << "   k"
+		<< std::setw(colwidth) << "Tournament tree"
+		<< std::setw(colwidth) << "Static heap"
+		<< std::setw(colwidth) << "STL priority_queue"
+		<< std::setw(colwidth) << "Streaming max" << std::endl;
 	test<4>  (results, logger);
 	test<8>  (results, logger);
 	test<16> (results, logger);

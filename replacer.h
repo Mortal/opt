@@ -16,6 +16,13 @@ struct replacer<std::priority_queue<T> > {
     }
 };
 
+template <typename T, int m>
+struct replacer<static_heap<T, m> > {
+    static void replace_top(static_heap<T, m> * q, const T & el) {
+	q->replace_top(el);
+    }
+};
+
 template <typename Q>
 struct replacer {
     template <typename T>
@@ -23,3 +30,4 @@ struct replacer {
 	q->push(el);
     }
 };
+// vim: set sw=4 sts=4 ts=8 noet:
