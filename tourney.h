@@ -48,15 +48,6 @@ struct tournament_tree_round<T, 0, Compare, Capacity> {
     inline const T * begin() const { return keys+0; }
     inline const T * end()   const { return keys+Capacity; }
 
-    inline void printline(size_t) {
-	std::cout << std::setw(16) << key(m_entry);
-    }
-
-    inline void print() {
-	printline();
-	std::cout << std::endl;
-    }
-
 private:
     T keys[Capacity];
     index_t m_entry;
