@@ -73,15 +73,21 @@ void all_tests(Results & results, Logger & logger) {
 		<< std::setw(colwidth) << "Tournament tree"
 		<< std::setw(colwidth) << "Static heap"
 		<< std::setw(colwidth) << "STL priority_queue"
-		<< std::setw(colwidth) << "Streaming max" << std::endl;
-	test<4>  (results, logger);
-	test<8>  (results, logger);
-	test<16> (results, logger);
-	test<32> (results, logger);
-	test<64> (results, logger);
-	test<128>(results, logger);
-	test<256>(results, logger);
-	test<512>(results, logger);
+		<< std::setw(colwidth) << "Unsorted array" << std::endl;
+	test<2>    (results, logger);
+	test<4>    (results, logger);
+	test<8>    (results, logger);
+	test<16>   (results, logger);
+	test<32>   (results, logger);
+	test<64>   (results, logger);
+	test<128>  (results, logger);
+	test<256>  (results, logger);
+	test<512>  (results, logger);
+	test<1024> (results, logger);
+	test<2048> (results, logger);
+	test<4096> (results, logger);
+	test<8192> (results, logger);
+	test<16384>(results, logger);
 }
 
 int main(int argc, char ** argv) {
