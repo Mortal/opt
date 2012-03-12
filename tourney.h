@@ -71,6 +71,7 @@ struct tournament_tree_round {
     inline tournament_tree_round()
 	: next_contestant(0)
     {
+	std::fill(m_entries+0, m_entries+contestants, 0);
     }
 
     inline winner_type winner() {
