@@ -30,9 +30,7 @@ int main(int argc, char ** argv) {
 	    use_debug_reporter = true;
 	}
     }
-    size_t rooms = 0;
-    size_t person_count = 0;
-    input_t input = get_input(rooms, person_count);
+    input_t input = get_input();
 
     if (use_debug_reporter)
 	go<debug_reporter>(input, parallel);

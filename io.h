@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include "types.h"
 
-inline input_t get_input(size_t & rooms, size_t & person_count) {
+inline input_t get_input() {
     input_t result;
     capacity_t & capacity = result.capacity;
     people_t & people = result.people;
@@ -19,7 +19,6 @@ inline input_t get_input(size_t & rooms, size_t & person_count) {
 	size_t p;
 	while (tokens >> p) {
 	    capacity.push_back(p);
-	    ++rooms;
 	}
     }
     {
@@ -47,7 +46,6 @@ inline input_t get_input(size_t & rooms, size_t & person_count) {
 	}
 
 	people.push_back(prio);
-	++person_count;
     }
 
     return result;
