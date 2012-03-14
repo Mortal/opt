@@ -22,15 +22,18 @@ void go(input_t & input, bool parallel) {
 int main(int argc, char ** argv) {
     bool parallel = true;
     bool use_debug_reporter = false;
+    bool csv = false;
     for (int i = 1; i < argc; ++i) {
 	std::string arg(argv[i]);
 	if (arg == "-s" || arg == "--sequential") {
 	    parallel = false;
 	} else if (arg == "-d" || arg == "--debug") {
 	    use_debug_reporter = true;
+	} else if (arg == "-c" || arg == "--csv") {
+	    csv = true;
 	}
     }
-    input_t input = csv_parser().parse_csv_input();
+    input_t input = csv ? csv_parser().parse_csv_input() : get_input();
 
     if (use_debug_reporter)
 	go<debug_reporter>(input, parallel);
