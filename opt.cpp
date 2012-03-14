@@ -14,7 +14,7 @@ void go(input_t & input, bool parallel) {
     Reporter reporter;
     obj_goodness objective;
     if (parallel)
-	parallel_solve(input, objective, reporter);
+	parallel_solve<buffer_report_delayed>(input, objective, reporter);
     else
 	solve(input, objective, reporter);
 }

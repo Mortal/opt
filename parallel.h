@@ -83,11 +83,11 @@ struct parallel_solver {
     }
 };
 
-template <typename Objective, typename Reporter>
+template <template <typename Reporter> class BufferReporter, typename Reporter, typename Objective>
 inline void parallel_solve(const input_t & input, Objective & obj, Reporter & reporter) {
     parallel_buffer buf;
     parallel_reporter rep(buf);
-    reporter.start();
+    BufferReporter<Reporter> brep(reporter, input, buf);
 
     unsigned int t = boost::thread::hardware_concurrency();
     boost::thread threads[t];
@@ -99,16 +99,79 @@ inline void parallel_solve(const input_t & input, Objective & obj, Reporter & re
 	boost::swap(th, threads[i]);
     }
 
-    size_t prev_times = 0;
-    while (true) {
-	boost::unique_lock<boost::mutex> lock(buf.m);
-	while (!buf.has_result) buf.cond.wait(lock);
-	parallel_result res = buf.fetch();
-	reporter += t*(res.times-prev_times);
-	prev_times = res.times;
-	reporter(input, res.solution, res.goodness);
-    }
+    brep();
 }
+
+template <typename Reporter>
+struct buffer_report_immediate {
+
+    inline buffer_report_immediate(const Reporter & reporter, const input_t & input, parallel_buffer & buf)
+	: prev_times(0)
+	, buf(buf)
+	, input(input)
+	, reporter(reporter)
+    {
+    }
+
+    inline void operator()() {
+	reporter.start();
+	while (true) {
+	    boost::unique_lock<boost::mutex> lock(buf.m);
+	    while (!buf.has_result) buf.cond.wait(lock);
+	    parallel_result res = buf.fetch();
+	    reporter += res.times-prev_times;
+	    prev_times = res.times;
+	    reporter(input, res.solution, res.goodness);
+	}
+    }
+
+private:
+    size_t prev_times;
+    parallel_buffer & buf;
+    input_t input;
+    Reporter reporter;
+};
+
+template <typename Reporter>
+struct buffer_report_delayed {
+
+    inline buffer_report_delayed(const Reporter & reporter, const input_t & input, parallel_buffer & buf)
+	: prev_times(0)
+	, buf(buf)
+	, input(input)
+	, reporter(reporter)
+    {
+    }
+
+    inline void operator()() {
+	std::unique_ptr<parallel_result> held_result;
+	boost::unique_lock<boost::mutex> lock(buf.m);
+	while (true) {
+	    while (!buf.has_result) {
+		if (held_result.get()) {
+		    if (!buf.cond.timed_wait(lock, boost::get_system_time() + boost::posix_time::milliseconds(5000))) {
+			// We timed out.
+			lock.unlock();
+			reporter += held_result->times - prev_times;
+			prev_times = held_result->times;
+			reporter(input, held_result->solution, held_result->goodness);
+			lock.lock();
+			held_result.reset(0);
+		    }
+		} else {
+		    buf.cond.wait(lock);
+		}
+	    }
+	    held_result.reset(new parallel_result(buf.fetch()));
+	}
+    }
+
+private:
+    size_t prev_times;
+    parallel_buffer & buf;
+    input_t input;
+    Reporter reporter;
+};
 
 #endif // __PARALLEL_H__
 // vim: set sw=4 sts=4 ts=8 noet:
