@@ -22,7 +22,7 @@ struct parallel_result {
 };
 
 /** Passing solutions between threads, filtering to make sure reported
- * solutions are monotonically non-decreasing in goodness. */
+ * solutions are monotonically increasing in goodness. */
 struct parallel_buffer {
     boost::mutex m;
     /** Signalled when there is a new result. */
@@ -44,7 +44,7 @@ struct parallel_buffer {
     /** Caller must not hold the mutex. */
     inline void send_result(const parallel_result & source) {
 	boost::unique_lock<boost::mutex> lock(m);
-	if (held_result.get() && source.goodness < held_result->goodness) return;
+	if (held_result.get() && source.goodness <= held_result->goodness) return;
 	has_result = true;
 	held_result.reset(new parallel_result(source));
 	cond.notify_one();
