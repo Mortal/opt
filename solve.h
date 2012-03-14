@@ -72,6 +72,8 @@ struct permuter_t {
     inline permuter_t(const input_t & input) : input(input), _exhausted(false) {
 	dest_count = input.capacity.size();
 	person_count = input.people.size();
+	assert(dest_count > 0);
+	assert(person_count > 0);
 	reset();
     }
     inline bool exhausted() const {
@@ -181,6 +183,7 @@ struct solver_t {
 	    }
 	    if (p >= person_count) break;
 	}
+	assert(p >= person_count && "Not enough destinations");
     }
 
 inline weight_t optimize(assignment_t & base) {

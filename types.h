@@ -11,7 +11,7 @@ typedef size_t dest_t;
 
 typedef size_t weight_t;
 
-static const person_t person_capacity = 47;
+static const person_t person_capacity = 54;
 static const person_t roomie_capacity = 9;
 static const dest_t dest_capacity = 25;
 static const person_t destpeople_capacity = 15;

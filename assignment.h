@@ -44,6 +44,7 @@ struct assignment_t {
     inline destassignment_t by_dest() const {
 	destassignment_t result(dest_count);
 	for (person_t p = 0; p < person_count; ++p) {
+	    assert(by_person[p] < dest_count);
 	    result[by_person[p]].push_back(p);
 	}
 	return result;

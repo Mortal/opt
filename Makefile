@@ -17,7 +17,7 @@ ifneq ($(BOOST_ROOT),)
 endif
 
 CXXFLAGS+=-Wall -Wextra --std=gnu++0x
-LDFLAGS+=-lboost_system -lboost_chrono -lboost_timer -lboost_thread
+LDFLAGS+=-lboost_system -lboost_chrono -lboost_timer -lboost_thread -lboost_regex
 
 opt: opt.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^

@@ -30,7 +30,7 @@ int main(int argc, char ** argv) {
 	    use_debug_reporter = true;
 	}
     }
-    input_t input = get_input();
+    input_t input = csv_parser().parse_csv_input();
 
     if (use_debug_reporter)
 	go<debug_reporter>(input, parallel);

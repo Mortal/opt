@@ -1,0 +1,78 @@
+4-St,2,,,,,
+4-1,4,,,,,
+4-2,2,,,,,
+4-3,4,,,,,
+5-St,3,,,,,
+5-1,2,,,,,
+5-2,3,,,,,
+5-3,3,,,,,
+6-St,2,,,,,
+6-1,2,,,,,
+6-2,2,,,,,
+6-3,1,,,,,
+7-St,3,,,,,
+7-1,4,,,,,
+7-2,4,,,,,
+7-3,3,,,,,
+8-St,2,,,,,
+8-1,0,,,,,
+8-2,1,,,,,
+8-3,4,,,,,
+9-St,4,,,,,
+9-1,0,,,,,
+9-2,0,,,,,
+9-3,5,,,,,
+510,3,8,1,Langelandsgade,Ikke stue,"510, 511, 512, 513, 514"
+511,2,9,1,Langelandsgade,Stue,"510, 511, 512, 513, 514"
+512,7,0,5,Langelandsgade,Ikke stue,"510, 511, 512, 513, 514"
+513,7,0,5,Langelandsgade,Stue,"510, 511, 512, 513, 514"
+514,3,6,3,Langelandsgade,Ikke stue,"510, 511, 512, 513, 514"
+515,7,2,3,Nørrebrogade,Stue,"510, 511, 512, 513, 514"
+516,8,1,3,Nørrebrogade,Stue,"510, 511, 512, 513, 514"
+517,9,0,3,Langelandsgade,Ikke stue,"510, 511, 512, 513, 514"
+518,4,8,0,Nørrebrogade,Ikke stue,"510, 511, 512, 513, 514"
+50,1,10,1,Langelandsgade,Stue,"50, 51, 52, 53, 54"
+51,8,0,4,Langelandsgade,Ikke stue,"50, 51, 52, 53, 54"
+52,12,0,0,Langelandsgade,Ikke stue,"50, 51, 52, 53, 54"
+53,7,4,1,Langelandsgade,Stue,"50, 51, 52, 53, 54"
+54,4,6,2,Nørrebrogade,Stue,"50, 51, 52, 53, 54"
+55,7,0,5,Nørrebrogade,Stue,"50, 51, 52, 53, 54"
+56,0,3,9,Nørrebrogade,Stue,"50, 51, 52, 53, 54"
+57,10,2,0,Nørrebrogade,Ikke stue,"50, 51, 52, 53, 54"
+58,1,0,11,Langelandsgade,Ikke stue,"50, 51, 52, 53, 54"
+59,1,5,6,Langelandsgade,Ikke stue,"50, 51, 52, 53, 54"
+60,5,5,2,Langelandsgade,Ikke stue,"50, 51, 52, 53, 54"
+61,11,1,0,Langelandsgade,Stue,"50, 51, 52, 53, 54"
+62,0,0,12,Langelandsgade,Ikke stue,"50, 51, 52, 53, 54"
+63,0,1,11,Nørrebrogade,Ikke stue,"50, 51, 52, 53, 54"
+64,4,1,7,Nørrebrogade,Stue,"50, 51, 52, 53, 54"
+170,0,4,8,Langelandsgade,Ikke stue,"170, 171, 172, 173, 174"
+171,2,8,2,Langelandsgade,Stue,"170, 171, 172, 173, 174"
+172,3,8,1,Nørrebrogade,Stue,"170, 171, 172, 173, 174"
+173,11,0,1,Nørrebrogade,Stue,"170, 171, 172, 173, 174"
+174,4,2,6,Langelandsgade,Ikke stue,"170, 171, 172, 173, 174"
+175,3,6,3,Nørrebrogade,Stue,"170, 171, 172, 173, 174"
+176,5,7,0,Nørrebrogade,Stue,"170, 171, 172, 173, 174"
+177,7,0,5,Nørrebrogade,Stue,"170, 171, 172, 173, 174"
+178,6,3,3,Langelandsgade,Stue,"170, 171, 172, 173, 174"
+179,0,12,0,Langelandsgade,Ikke stue,"170, 171, 172, 173, 174"
+180,2,2,8,Nørrebrogade,Ikke stue,"170, 171, 172, 173, 174"
+181,10,0,2,Nørrebrogade,Stue,"170, 171, 172, 173, 174"
+182,7,1,4,Nørrebrogade,Ikke stue,"170, 171, 172, 173, 174"
+183,11,1,0,Nørrebrogade,Ikke stue,"170, 171, 172, 173, 174"
+184,7,1,4,Langelandsgade,Ikke stue,"170, 171, 172, 173, 174"
+440,12,0,0,Nørrebrogade,Ikke stue,"440, 441, 442, 443, 444"
+441,0,6,6,Nørrebrogade,Stue,"440, 441, 442, 443, 444"
+442,2,5,5,Langelandsgade,Stue,"440, 441, 442, 443, 444"
+443,11,0,1,Nørrebrogade,Stue,"440, 441, 442, 443, 444"
+444,7,1,4,Langelandsgade,Stue,"440, 441, 442, 443, 444"
+445,6,1,5,Langelandsgade,Ikke stue,"440, 441, 442, 443, 444"
+446,6,3,3,Langelandsgade,Stue,"440, 441, 442, 443, 444"
+447,7,3,2,Langelandsgade,Ikke stue,"440, 441, 442, 443, 444"
+448,4,8,0,Langelandsgade,Ikke stue,"440, 441, 442, 443, 444"
+449,7,2,3,Langelandsgade,Stue,"440, 441, 442, 443, 444"
+450,9,3,0,Langelandsgade,Stue,"440, 441, 442, 443, 444"
+451,9,2,1,Langelandsgade,Stue,"440, 441, 442, 443, 444"
+452,6,0,6,Nørrebrogade,Stue,"440, 441, 442, 443, 444"
+453,10,0,2,Nørrebrogade,Ikke stue,"440, 441, 442, 443, 444"
+454,10,2,0,Langelandsgade,Ikke stue,"440, 441, 442, 443, 444"
