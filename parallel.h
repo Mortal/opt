@@ -21,18 +21,31 @@ struct parallel_result {
     }
 };
 
+/** Passing solutions between threads, filtering to make sure reported
+ * solutions are monotonically non-decreasing in goodness. */
 struct parallel_buffer {
     boost::mutex m;
+    /** Signalled when there is a new result. */
     boost::condition_variable cond;
     std::unique_ptr<parallel_result> held_result;
+    bool has_result;
 
+    inline parallel_buffer()
+	: has_result(false)
+    {
+    }
+
+    /** Caller must hold the mutex. */
     inline const parallel_result & fetch() {
+	has_result = false;
 	return *held_result;
     }
 
+    /** Caller must not hold the mutex. */
     inline void send_result(const parallel_result & source) {
 	boost::unique_lock<boost::mutex> lock(m);
 	if (held_result.get() && source.goodness < held_result->goodness) return;
+	has_result = true;
 	held_result.reset(new parallel_result(source));
 	cond.notify_one();
 	lock.unlock();
@@ -89,7 +102,7 @@ inline void parallel_solve(const input_t & input, Objective & obj, Reporter & re
     size_t prev_times = 0;
     while (true) {
 	boost::unique_lock<boost::mutex> lock(buf.m);
-	buf.cond.wait(lock);
+	while (!buf.has_result) buf.cond.wait(lock);
 	parallel_result res = buf.fetch();
 	reporter += t*(res.times-prev_times);
 	prev_times = res.times;
