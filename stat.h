@@ -54,7 +54,7 @@ struct normal_sample {
     double variance() const { return ssd()/(n()-1); }
 
     ci_t ci(double alpha = 0.05) const {
-	if (n() < 2) return std::make_pair(-1.0/0, 1.0/0);
+	if (n() < 2) return std::make_pair(-1.0/0.0, 1.0/0.0);
 	boost::math::students_t dist(n() - 1);
 	double T = quantile(complement(dist, alpha / 2));
 	double w = T * stddev() / sqrt(n());
