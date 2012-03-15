@@ -5,6 +5,7 @@
 #include <ctime>
 #include "tourney.h"
 #include "stream_max.h"
+#include "static_heap.h"
 #include "replacer.h"
 
 template <typename Q, size_t n, size_t k>

@@ -157,7 +157,7 @@ template <typename T, size_t Round, typename Compare, size_t Capacity>
 struct lineprinter {
 
     static inline void printline(std::ostream & os, tournament_tree_round<T, Round, Compare, Capacity> & t, size_t index) {
-	os << std::setw(16) << t.key(t.m_entries[index]);
+	os << std::setw(16) << *(t.m_entries[index]);
 	if (index & 1) return;
 	lineprinter<T, Round-1, Compare, Capacity>::printline(os, t.inner, index >> 1);
     }
@@ -168,7 +168,7 @@ template <typename T, typename Compare, size_t Capacity>
 struct lineprinter<T, 0, Compare, Capacity> {
 
     static inline void printline(std::ostream & os, tournament_tree_round<T, 0, Compare, Capacity> & t, size_t /*index*/) {
-	os << std::setw(16) << t.key(t.m_entry);
+	os << std::setw(16) << *(t.m_entry);
     }
 
 };
@@ -185,10 +185,10 @@ struct tournament_tree_printer {
 	print(t.inner);
     }
 
-    template <size_t Round, size_t Capacity>
-    inline void print(tournament_tree_round<T, Round, Compare, Capacity> & t) {
+    template <size_t Round, size_t Capacity, typename RoundCompare>
+    inline void print(tournament_tree_round<const T *, Round, RoundCompare, Capacity> & t) {
 	for (size_t i = 0; i < t.contestants; ++i) {
-	    lineprinter<T, Round, Compare, Capacity>::printline(os, t, i);
+	    lineprinter<const T *, Round, RoundCompare, Capacity>::printline(os, t, i);
 	    os << '\n';
 	}
     }
