@@ -75,10 +75,7 @@ private:
 std::pair<double,double> common_variance(const normal_sample & first, const normal_sample & second) {
     if (first.variance() < second.variance()) return common_variance(second, first);
     double F = first.variance() / second.variance();
-    std::cout << "Test statistic " << F << std::endl;
     double cdf = 1-boost::math::cdf(boost::math::fisher_f(first.n()-1, second.n()-1), F);
-    std::cout << "cdf " << cdf << std::endl;
-    std::cout << ((cdf < 0.05) ? "REJECTED\n" : "ACCEPTED\n");
     double p_obs = 2*cdf;
     double var = (first.ssd() + second.ssd())/(first.n()+second.n()-2);
     return std::make_pair(var, p_obs);
@@ -90,7 +87,6 @@ std::pair<double, double> common_mean(const normal_sample & first, const normal_
     double t = (first.mean() - second.mean())/sqrt(variance*(1.0/first.n() + 1.0/second.n()));
     double p_obs = 2*(1-boost::math::cdf(boost::math::students_t(first.n()+second.n()-2), t));
     double mean = (first.mean()*first.n()+second.mean()*second.n())/(first.n()+second.n());
-    std::cout << "Test statistic " << t << " p_obs " << p_obs << " mean " << mean << std::endl;
     return std::make_pair(mean, p_obs);
 }
 
