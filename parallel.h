@@ -90,7 +90,7 @@ inline void parallel_solve(const input_t & input, Objective & obj, Reporter & re
     BufferReporter<Reporter> brep(reporter, input, buf);
 
     unsigned int t = boost::thread::hardware_concurrency();
-    boost::thread threads[t];
+    boost::thread * threads = new boost::thread[t];
     randutil rand(time(NULL));
     uint32_t seed = rand.random_source();
     for (unsigned int i = 0; i < t; ++i) {
@@ -100,6 +100,7 @@ inline void parallel_solve(const input_t & input, Objective & obj, Reporter & re
     }
 
     brep();
+    delete[] threads;
 }
 
 template <typename Reporter>
