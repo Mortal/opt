@@ -162,9 +162,7 @@ struct csv_reporter {
 
     inline void operator()(const input_t & input, const assignment_t & solution, const weight_t & goodness) {
 	std::ofstream out(name(goodness));
-	out << t.elapsed() << " s\n";
-	out << "After " << attempts << " attempts in total.\n";
-	out << "Beboer,v_p,v_s,v_e,x_s,x_e,x_p,Gang,g_p,g_s,g_e,v_p,v_s,v_e,G,Ønskede roomies\n";
+	out << "Beboer,v_p,v_s,v_e,x_s,x_e,x_p,Gang,g_p,g_s,g_e,v_p,v_s,v_e,G,Ønskede roomies," << t.elapsed() << " s," << attempts << "\n";
 
 	sorted_solution sol(input, solution);
 	parser.print(out, sol);
