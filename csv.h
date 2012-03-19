@@ -133,7 +133,7 @@ public:
 		<< c.v_e << ','
 		<< c.G << ',';
 	    for (roomies_t::const_iterator i = c.wished_roomies.begin(); i != c.wished_roomies.end(); ++i) {
-		out << *i << ' ';
+		out << person_names[*i] << ' ';
 	    }
 	    out << '\n';
 	    goodness += c.G;
