@@ -49,4 +49,5 @@ tourneytime.o: tourneytime.cpp tourney.h speedtest.h
 clean:
 	$(RM) opt test geninput tourney_test tourneytime \
 		opt.o solve_bridge.o random.o test.o geninput.o tourney_test.o tourneytime.o \
-		personer.aux personer.log personer.pdf prioriteter.aux prioriteter.log prioriteter.pdf
+		personer.aux personer.log personer.pdf prioriteter.aux prioriteter.log prioriteter.pdf \
+		opt-*.csv
