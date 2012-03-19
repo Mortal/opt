@@ -150,7 +150,7 @@ struct buffer_report_delayed {
 	while (true) {
 	    while (!buf.has_result) {
 		if (held_result.get()) {
-		    if (!buf.cond.timed_wait(lock, boost::get_system_time() + boost::posix_time::milliseconds(5000))) {
+		    if (!buf.cond.timed_wait(lock, boost::get_system_time() + boost::posix_time::milliseconds(1000))) {
 			// We timed out.
 			lock.unlock();
 			reporter += held_result->times - prev_times;
