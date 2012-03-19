@@ -32,12 +32,10 @@ public:
 	std::vector<std::string> roomies;
 	size_t capacity_sum = 0;
 	while (getline(std::cin, line)) {
-	    std::cout << line << std::endl;
 	    ++inputline;
 	    static const boost::regex r_capacity("(\\d+-(St|\\d+)),(\\d+).*");
 	    boost::smatch m_capacity;
 	    if (boost::regex_match(line, m_capacity, r_capacity)) {
-		std::cout << "Got destination" << std::endl;
 		if (capacity_count == dest_capacity) ioerror("Too many destinations");
 		destination_names.push_back(m_capacity.str(1));
 		result.capacity.push_back(boost::lexical_cast<size_t>(m_capacity.str(3)));
@@ -50,7 +48,6 @@ public:
 	    static const boost::regex r_person("\"?([^,]*)\"?,(\\d+),(\\d+),(\\d+),\"?([^,]+)\"?,\"?([^,]+)\"?,\"(.*)\"");
 	    boost::smatch m_person;
 	    if (boost::regex_match(line, m_person, r_person)) {
-		std::cout << "Got person" << std::endl;
 		if (person_count == person_capacity) ioerror("Too many people");
 		person_names.push_back(m_person.str(1));
 		person_ids.insert(std::make_pair(m_person.str(1), person_count));
@@ -87,7 +84,6 @@ public:
 		++begin;
 	    }
 	}
-	print(result);
 	return result;
     }
 
