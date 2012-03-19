@@ -8,10 +8,10 @@
 #include "io.h"
 #include "objective.h"
 #include "parallel.h"
+#include "csv.h"
 
 template <typename Reporter>
-void go(input_t & input, bool parallel, bool delayed) {
-    Reporter reporter;
+void go(input_t & input, bool parallel, bool delayed, Reporter reporter = Reporter()) {
     obj_goodness objective;
     if (parallel) {
 	if (delayed) {
@@ -41,12 +41,21 @@ int main(int argc, char ** argv) {
 	    delayed = false;
 	}
     }
-    input_t input = csv ? csv_parser().parse_csv_input() : get_input();
+    std::auto_ptr<input_t> input;
+    std::auto_ptr<csv_parser> p;
+    if (csv) {
+	p.reset(new csv_parser());
+	input.reset(new input_t(p->parse_csv_input()));
+    } else {
+	input.reset(new input_t(get_input()));
+    }
 
     if (use_debug_reporter)
-	go<debug_reporter>(input, parallel, delayed);
+	go<debug_reporter>(*input, parallel, delayed);
+    else if (csv)
+	go<csv_reporter>(*input, parallel, delayed, csv_reporter(*p));
     else
-	go<cout_reporter>(input, parallel, delayed);
+	go<cout_reporter>(*input, parallel, delayed);
 
     return 0;
 }
