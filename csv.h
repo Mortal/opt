@@ -1,6 +1,9 @@
 #ifndef __CSV_H__
 #define __CSV_H__
 
+#include <fstream>
+#include <iostream>
+#include <string>
 #include <sstream>
 #include "types.h"
 #include "io.h"
