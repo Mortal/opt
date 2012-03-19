@@ -106,10 +106,44 @@ public:
 	    std::cout << '"' << std::endl;
 	}
     }
+
+    void print(std::ofstream & out, const sorted_solution & sol) {
+	weight_t goodness = 0;
+	for (person_t pp = 0; pp < sol.size(); ++pp) {
+	    person_t p = sol[pp].first;
+	    const goodness_calculation & c = sol[pp].second;
+	    dest_t dest = c.dest;
+	    out << person_names[p] << ','
+		<< sol.person(p).wp << ','
+		<< sol.person(p).w1 << ','
+		<< sol.person(p).w2 << ','
+		<< (sol.person(p).c1 ? "Langelandsgade" : "Norrebrogade") << ','
+		<< (sol.person(p).c2 ? "Stue" : "Ikke stue") << ",\"";
+	    for (size_t j = 0; j < sol.person(p).roomies.size(); ++j) {
+		if (j) out << ", ";
+		out << person_names[sol.person(p).roomies[j]];
+	    }
+	    out << "\","
+		<< destination_names[dest] << ','
+		<< c.g_p << ','
+		<< c.g_s << ','
+		<< c.g_e << ','
+		<< c.v_p << ','
+		<< c.v_s << ','
+		<< c.v_e << ','
+		<< c.G << ',';
+	    for (roomies_t::const_iterator i = c.wished_roomies.begin(); i != c.wished_roomies.end(); ++i) {
+		out << *i << ' ';
+	    }
+	    out << '\n';
+	    goodness += c.G;
+	}
+	out << "Sum,,,,,,,," << goodness << '\n';
+    }
 };
 
 struct csv_reporter {
-    inline csv_reporter(csv_parser &) : attempts(0) {
+    inline csv_reporter(csv_parser & parser) : attempts(0), parser(parser) {
     }
 
     inline void start() {
@@ -130,37 +164,17 @@ struct csv_reporter {
 	std::ofstream out(name(goodness));
 	out << t.elapsed() << " s\n";
 	out << "After " << attempts << " attempts in total.\n";
-	out << "Beboer,Gang,g_p,g_s,g_e,v_p,v_s,v_e,G,Ønskede roomies\n";
+	out << "Beboer,v_p,v_s,v_e,x_s,x_e,x_p,Gang,g_p,g_s,g_e,v_p,v_s,v_e,G,Ønskede roomies\n";
 
 	sorted_solution sol(input, solution);
-	for (person_t pp = 0; pp < sol.size(); ++pp) {
-	    person_t p = sol[pp].first;
-	    const goodness_calculation & c = sol[pp].second;
-	    dest_t dest = solution[p];
-	    out << p << ',';
-	    if (dest%4)
-		out << (4+dest/4) << '-' << dest%4 << ' ';
-	    else
-		out << (4+dest/4) << '-' << "St";
-	    out << ','
-		<< c.g_p << ','
-		<< c.g_s << ','
-		<< c.g_e << ','
-		<< c.v_p << ','
-		<< c.v_s << ','
-		<< c.v_e << ','
-		<< c.G << ',';
-	    for (roomies_t::const_iterator i = c.wished_roomies.begin(); i != c.wished_roomies.end(); ++i) {
-		out << *i << ' ';
-	    }
-	    out << '\n';
-	}
-	out << "Sum,,,,,,,," << goodness << '\n';
+	parser.print(out, sol);
+	std::cout << "Printed to " << name(goodness) << std::endl;
     }
 
 private:
     boost::timer t;
     size_t attempts;
+    csv_parser & parser;
 };
 
 #endif // __CSV_H__

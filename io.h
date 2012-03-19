@@ -73,12 +73,16 @@ struct sorted_solution {
 	std::sort(pgs+0, pgs+person_count, ptrless());
     }
 
-    inline size_t size() {
+    inline size_t size() const {
 	return person_count;
     }
 
-    inline std::pair<size_t, const goodness_calculation &> operator[](size_t i) {
+    inline std::pair<size_t, const goodness_calculation &> operator[](size_t i) const {
 	return std::make_pair(pgs[i]-gs, *(pgs[i]));
+    }
+
+    inline const people_t::item_type & person(size_t i) const {
+	return people[i];
     }
 private:
     const people_t & people;

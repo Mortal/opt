@@ -5,11 +5,13 @@
 #include "assignment.h"
 
 struct goodness_calculation {
+    dest_t dest;
     weight_t g_p, g_s, g_e, v_p, v_s, v_e, G;
     const roomies_t & wished_roomies;
 
     inline goodness_calculation(const priorities_t & prio, dest_t dest, const condition_t & condition, const destassignment_t::item_type & actual_roomies)
-	: g_p(0)
+	: dest(dest)
+	, g_p(0)
 	, g_s(prio.w1 && condition[0][dest])
 	, g_e(prio.w2 && condition[1][dest])
 	, v_p(prio.wp)
