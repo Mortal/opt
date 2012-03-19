@@ -36,7 +36,9 @@ tourneytime: tourneytime.o
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ -c $<
 
-opt.o: opt.cpp assignment.h csv.h io.h objective.h parallel.h random.h solve.h tourney.h types.h
+opt.o: opt.cpp assignment.h csv.h io.h objective.h random.h types.h
+
+solve_bridge.o: solve_bridge.cpp assignment.h csv.h io.h objective.h parallel.h random.h solve.h tourney.h types.h
 
 geninput.o: geninput.cpp
 
@@ -46,5 +48,5 @@ tourneytime.o: tourneytime.cpp tourney.h speedtest.h
 
 clean:
 	$(RM) opt test geninput tourney_test tourneytime \
-		opt.o random.o test.o geninput.o tourney_test.o tourneytime.o \
+		opt.o solve_bridge.o random.o test.o geninput.o tourney_test.o tourneytime.o \
 		personer.aux personer.log personer.pdf prioriteter.aux prioriteter.log prioriteter.pdf
