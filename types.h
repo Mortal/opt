@@ -63,7 +63,7 @@ struct static_vector {
     }
 
     inline size_t count(const T & p) const {
-	for (size_t i = 0; i < N; ++i) {
+	for (size_t i = 0; i < size(); ++i) {
 	    if (container[i] == p) return 1;
 	}
 	return 0;
