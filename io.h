@@ -1,15 +1,12 @@
 #ifndef __IO_H__
 #define __IO_H__
 
-#include <iomanip>
 #include <unordered_map>
 #include <boost/timer.hpp>
 #include <boost/regex.hpp>
 #include <boost/lexical_cast.hpp>
 #include <cstdlib>
 #include "types.h"
-#include "assignment.h"
-#include "objective.h"
 
 inline input_t get_input() {
     input_t result;

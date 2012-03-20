@@ -4,9 +4,10 @@
 #include <vector>
 
 #include "types.h"
-#include "solve_bridge.h"
+#include "solve.h"
 #include "io.h"
 #include "objective.h"
+#include "parallel.h"
 #include "csv.h"
 
 template <typename Reporter>

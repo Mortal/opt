@@ -1,7 +1,6 @@
 #ifndef __ASSIGNMENT_H__
 #define __ASSIGNMENT_H__
 
-#include "random.h"
 #include "types.h"
 
 // person -> destination

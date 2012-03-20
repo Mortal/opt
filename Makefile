@@ -19,7 +19,7 @@ endif
 CXXFLAGS+=-Wall -Wextra --std=gnu++0x
 LDFLAGS+=-lboost_system -lboost_chrono -lboost_timer -lboost_thread -lboost_regex
 
-opt: opt.o solve_bridge.o
+opt: opt.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
 all: opt geninput tourney_test tourneytime
