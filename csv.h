@@ -106,23 +106,14 @@ public:
 	}
     }
 
-    void print(std::ofstream & out, const sorted_solution & sol) {
+    void print(std::ofstream & out, const sorted_solution & sol, double elapsed, uint64_t attempts) {
 	weight_t goodness = 0;
+	out << "Beboer,Godhed:,Gang,g_p,g_s,g_e,v_p,v_s,v_e,G,Ønsker:,Personer,Side,Etage," << elapsed << " s," << attempts << "\n";
 	for (person_t pp = 0; pp < sol.size(); ++pp) {
 	    person_t p = sol[pp].first;
 	    const goodness_calculation & c = sol[pp].second;
 	    dest_t dest = c.dest;
-	    out << person_names[p] << ','
-		<< sol.person(p).wp << ','
-		<< sol.person(p).w1 << ','
-		<< sol.person(p).w2 << ','
-		<< (sol.person(p).c1 ? "Langelandsgade" : "Norrebrogade") << ','
-		<< (sol.person(p).c2 ? "Stue" : "Ikke stue") << ",\"";
-	    for (size_t j = 0; j < sol.person(p).roomies.size(); ++j) {
-		if (j) out << ", ";
-		out << person_names[sol.person(p).roomies[j]];
-	    }
-	    out << "\","
+	    out << person_names[p] << ",,"
 		<< destination_names[dest] << ','
 		<< c.g_p << ','
 		<< c.g_s << ','
@@ -130,14 +121,18 @@ public:
 		<< c.v_p << ','
 		<< c.v_s << ','
 		<< c.v_e << ','
-		<< c.G << ',';
-	    for (roomies_t::const_iterator i = c.wished_roomies.begin(); i != c.wished_roomies.end(); ++i) {
-		out << person_names[*i] << ' ';
+		<< c.G << ",,\"";
+	    for (size_t j = 0; j < sol.person(p).roomies.size(); ++j) {
+		if (j) out << ", ";
+		out << person_names[sol.person(p).roomies[j]];
 	    }
-	    out << '\n';
+	    out << "\","
+		<< (sol.person(p).c1 ? "Langelandsgade" : "Norrebrogade") << ','
+		<< (sol.person(p).c2 ? "Stue" : "Ikke stue")
+		<< '\n';
 	    goodness += c.G;
 	}
-	out << "Sum,,,,,,,," << goodness << '\n';
+	out << "Sum,,,,,,,,," << goodness << '\n';
     }
 };
 
@@ -161,10 +156,9 @@ struct csv_reporter {
 
     inline void operator()(const input_t & input, const assignment_t & solution, const weight_t & goodness) {
 	std::ofstream out(name(goodness));
-	out << "Beboer,v_p,v_s,v_e,x_s,x_e,x_p,Gang,g_p,g_s,g_e,v_p,v_s,v_e,G,Ønskede roomies," << t.elapsed() << " s," << attempts << "\n";
 
 	sorted_solution sol(input, solution);
-	parser.print(out, sol);
+	parser.print(out, sol, t.elapsed(), attempts);
 	std::cout << "Printed to " << name(goodness) << std::endl;
     }
 
