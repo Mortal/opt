@@ -26,7 +26,7 @@ void go(input_t & input, bool parallel, bool delayed, Reporter reporter = Report
 int main(int argc, char ** argv) {
     bool parallel = true;
     bool use_debug_reporter = false;
-    bool csv = false;
+    bool csv = true;
     bool delayed = true;
     for (int i = 1; i < argc; ++i) {
 	std::string arg(argv[i]);
@@ -36,6 +36,8 @@ int main(int argc, char ** argv) {
 	    use_debug_reporter = true;
 	} else if (arg == "-c" || arg == "--csv") {
 	    csv = true;
+	} else if (arg == "-t" || arg == "--txt") {
+	    csv = false;
 	} else if (arg == "--immediate") {
 	    delayed = false;
 	}
