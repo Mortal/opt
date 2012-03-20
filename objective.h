@@ -6,26 +6,42 @@
 
 struct goodness_calculation {
     dest_t dest;
-    weight_t g_p, g_s, g_e, v_p, v_s, v_e, G;
+    bool g_p, g_s, g_e;
+    weight_t v_p, v_s, v_e, G;
     const roomies_t & wished_roomies;
 
-    inline goodness_calculation(const priorities_t & prio, dest_t dest, const condition_t & condition, const destassignment_t::item_type & actual_roomies)
-	: dest(dest)
-	, g_p(0)
-	, g_s(condition[0][dest] == prio.c1)
-	, g_e(condition[1][dest] == prio.c2)
-	, v_p(prio.wp)
-	, v_s(prio.w1)
-	, v_e(prio.w2)
-	, G(0)
-	, wished_roomies(prio.roomies)
+    inline goodness_calculation(const priorities_t & prio,
+				dest_t dest,
+				const condition_t & condition,
+				const destassignment_t::item_type & actual_roomies)
+	: wished_roomies(prio.roomies)
     {
-	if (g_s) G += v_s;
-	if (g_e) G += v_e;
+	this->dest = dest;
+
+	G = 0;
+
+	v_s = prio.w1;
+	if (condition[0][dest] == prio.c1) {
+	    g_s = true;
+	    G += v_s;
+	} else {
+	    g_s = false;
+	}
+
+	v_e = prio.w2;
+	if (condition[1][dest] == prio.c2) {
+	    g_e = true;
+	    G += v_e;
+	} else {
+	    g_e = false;
+	}
+
+	v_p = prio.wp;
+	g_p = false;
 	if (prio.wp) {
 	    for (person_t q = 0; q < actual_roomies.size(); ++q) {
-		if (wished_roomies.count(actual_roomies[q])) {
-		    g_p = 1;
+		if (wished_roomies.count(actual_roomies[q]) > 0) {
+		    g_p = true;
 		    G += v_p;
 		    break;
 		}
