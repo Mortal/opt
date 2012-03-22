@@ -1,3 +1,5 @@
+#include <cmath>
+
 struct ci_t {
     inline ci_t(std::pair<double, double> ci)
 	: first(ci.first)
@@ -71,8 +73,15 @@ private:
     double m_uss;
 };
 
+// returns significance probability
+double common_variance(double var_x, double var_y, size_t freedom_x, size_t freedom_y, bool loud = true);
+
 // returns <estimation of variance, significance probability>
-std::pair<double,double> common_variance(const normal_sample & first, const normal_sample & second, bool loud = true);
+inline std::pair<double,double> common_variance(const normal_sample & first, const normal_sample & second, bool loud = true) {
+    double p_obs = common_variance(first.variance(), second.variance(), first.freedom(), second.freedom(), loud);
+    double var = (first.ssd() + second.ssd())/(first.n()+second.n()-2);
+    return std::make_pair(var, p_obs);
+}
 
 std::pair<double, double> common_mean(const normal_sample & first, const normal_sample & second, bool loud = true);
 

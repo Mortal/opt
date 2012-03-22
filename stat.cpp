@@ -21,17 +21,15 @@ ci_t normal_sample::ci_variance(double alpha) const {
     return std::make_pair(lhs, rhs);
 }
 
-// returns <estimation of variance, significance probability>
-std::pair<double,double> common_variance(const normal_sample & first, const normal_sample & second, bool loud) {
-    if (first.variance() < second.variance()) return common_variance(second, first);
+double common_variance(double var_x, double var_y, size_t freedom_x, size_t freedom_y, bool loud) {
+    if (var_x < var_y) return common_variance(var_y, var_x, freedom_y, freedom_x, loud);
     if (loud) std::cout << "Test of common variance:" << std::endl;
-    double F = first.variance() / second.variance();
+    double F = var_x / var_y;
     if (loud) std::cout << "Test statistic: F = " << F << std::endl;
-    double cdf = 1-boost::math::cdf(boost::math::fisher_f(first.freedom(), second.freedom()), F);
+    double cdf = 1-boost::math::cdf(boost::math::fisher_f(freedom_x, freedom_y), F);
     double p_obs = 2*cdf;
-    if (loud) std::cout << "p_obs = 2*(1-F_(F(" << first.freedom() << ", " << second.freedom() << ")) (F)) = " << p_obs << std::endl;
-    double var = (first.ssd() + second.ssd())/(first.n()+second.n()-2);
-    return std::make_pair(var, p_obs);
+    if (loud) std::cout << "p_obs = 2*(1-F_(F(" << freedom_x << ", " << freedom_y << ")) (F)) = " << p_obs << std::endl;
+    return p_obs;
 }
 
 std::pair<double, double> common_mean(const normal_sample & first, const normal_sample & second, bool loud) {

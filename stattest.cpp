@@ -1,7 +1,6 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-#include <cmath>
 #include "stat.h"
 
 using namespace std;
