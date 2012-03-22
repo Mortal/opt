@@ -1,5 +1,6 @@
 #include <boost/math/distributions/students_t.hpp>
 #include <boost/math/distributions/fisher_f.hpp>
+#include <boost/math/distributions/chi_squared.hpp>
 
 struct ci_t {
     inline ci_t(std::pair<double, double> ci)
@@ -55,6 +56,7 @@ struct normal_sample {
     // Estimation of variance
     inline double variance() const { return ssd()/freedom(); }
 
+    // Confidence interval for the mean. biogeostat p. 61
     inline ci_t ci(double alpha = 0.05) const {
 	if (freedom() < 2) return std::make_pair(-1.0/0.0, 1.0/0.0);
 	boost::math::students_t dist(freedom());
@@ -63,8 +65,16 @@ struct normal_sample {
 	return std::make_pair(mean() - w, mean() + w);
     }
 
-    inline normal_sample operator+(const normal_sample & xs, const normal_sample & ys) {
-	return normal_sample(xs.n()+ys.n(), xs.sum()+ys.sum(), xs.uss()+ys.uss());
+    // Confidence interval for the variance. biogeostat p. 62
+    inline ci_t ci_variance(double alpha = 0.05) const {
+	boost::math::chi_squared_distribution<double> dist(freedom());
+	double lhs = freedom()*variance()/quantile(dist, 1-alpha/2);
+	double rhs = freedom()*variance()/quantile(dist, alpha/2);
+	return std::make_pair(lhs, rhs);
+    }
+
+    inline normal_sample operator+(const normal_sample & ys) {
+	return normal_sample(n()+ys.n(), sum()+ys.sum(), uss()+ys.uss());
     }
 
     // Deprecated

@@ -19,11 +19,12 @@ int main() {
     cout << "p_obs = " << fixed << setprecision(2) << v.second*100 << "% => " << ((v.second < 0.05) ? "Rejected" : "Accepted") << '\n';
     if (v.second >= 0.05) {
 	cout << "sigma^2 <- s^2 = " << v.first << '\n';
+	normal_samples zs(n1+n2, sum1+sum2, uss1+uss2);
+	cout << "Confidence interval: " << zs.ci_variance() << '\n';
 	cout << "Test of common mean:\n";
 	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "REJECTED" : "ACCEPTED") << '\n';
 	if (m.second >= 0.05) {
 	    cout << "mu <- m = " << m.first << '\n';
-	    normal_samples zs(n1+n2, sum1+sum2, uss1+uss2);
 	    cout << zs << endl;
 	    cout << "Confidence interval: " << zs.ci() << '\n';
 	}
