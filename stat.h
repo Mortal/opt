@@ -23,6 +23,13 @@ struct normal_sample {
     {
     }
 
+    inline normal_sample(size_t n, double sum, double uss)
+	: m_n(n)
+	, m_sum(sum)
+	, m_uss(uss)
+    {
+    }
+
     template <typename T>
     inline void operator()(const T & time) {
 	++m_n;
