@@ -18,8 +18,6 @@ std::ostream & operator<<(std::ostream & os, const ci_t & ci) {
 struct normal_sample {
     inline normal_sample()
 	: m_n(0)
-	, m_mean(0.0)
-	, m_m2(0.0)
 	, m_sum(0.0)
 	, m_uss(0.0)
     {
@@ -29,9 +27,6 @@ struct normal_sample {
     inline void operator()(const T & time) {
 	++m_n;
 	double x = static_cast<double>(time);
-	double delta = x - m_mean;
-	m_mean += delta/n();
-	m_m2 += delta*(x - m_mean);
 	m_uss += x*x;
 	m_sum += x;
     }
@@ -39,9 +34,9 @@ struct normal_sample {
     // Number of observations
     size_t n() const { return m_n; }
     // Mean of observations
-    double mean() const { return m_mean; }
+    double mean() const { return sum()/n(); }
     // sum of (x_i - mean)^2
-    double m2() const { return m_m2; }
+    double m2() const { return ssd(); }
     // Standard deviation
     double stddev() const { return sqrt(m2()/(n()-1)); }
     // Sum
@@ -65,8 +60,6 @@ struct normal_sample {
 
 private:
     size_t m_n;
-    double m_mean;
-    double m_m2;
     double m_sum;
     double m_uss;
 };
