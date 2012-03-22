@@ -18,15 +18,15 @@ int main() {
     cout << "\n\nTEST RESULTS\n\nTest of common variance:\n";
     cout << "p_obs = " << fixed << setprecision(2) << v.second*100 << "% => " << ((v.second < 0.05) ? "Rejected" : "Accepted") << '\n';
     if (v.second >= 0.05) {
-	cout << "sigma^2 <- s^2 = " << v.first << '\n';
+	cout << "sigma^2 <- s^2 = " << setprecision(5) << v.first << '\n';
 	normal_samples zs(n1+n2, sum1+sum2, uss1+uss2);
-	cout << "Confidence interval: " << zs.ci_variance() << '\n';
+	cout << "Confidence interval for the variance (biogeostat p. 61): " << setprecision(5) << zs.ci_variance() << '\n';
 	cout << "Test of common mean:\n";
 	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "REJECTED" : "ACCEPTED") << '\n';
 	if (m.second >= 0.05) {
 	    cout << "mu <- m = " << m.first << '\n';
-	    cout << zs << endl;
-	    cout << "Confidence interval: " << zs.ci() << '\n';
+	    cout << "Single sample data: " << zs << endl;
+	    cout << "Confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
 	}
     }
     return 0;
