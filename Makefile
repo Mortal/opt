@@ -27,7 +27,7 @@ all: opt geninput tourney_test tourneytime
 geninput: geninput.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
-stat: stat.o
+stattest: stattest.o stat.o
 	$(CXX) $(LDFLAGS) $(CXXFLAGS) $(LIBS) -o $@ $^
 
 tourney_test: tourney_test.o
@@ -50,6 +50,8 @@ tourney_test.o: tourney_test.cpp tourney.h
 tourneytime.o: tourneytime.cpp tourney.h speedtest.h
 
 stat.o: stat.cpp stat.h
+
+stattest.o: stattest.cpp stat.h
 
 clean:
 	$(RM) opt test geninput tourney_test tourneytime \
