@@ -72,9 +72,9 @@ private:
 };
 
 // returns <estimation of variance, significance probability>
-std::pair<double,double> common_variance(const normal_sample & first, const normal_sample & second);
+std::pair<double,double> common_variance(const normal_sample & first, const normal_sample & second, bool loud = true);
 
-std::pair<double, double> common_mean(const normal_sample & first, const normal_sample & second);
+std::pair<double, double> common_mean(const normal_sample & first, const normal_sample & second, bool loud = true);
 
 // typo
 typedef normal_sample normal_samples;
