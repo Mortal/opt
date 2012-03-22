@@ -42,15 +42,13 @@ struct normal_sample {
     size_t n() const { return m_n; }
     // Mean of observations
     double mean() const { return sum()/n(); }
-    // sum of (x_i - mean)^2
-    double m2() const { return ssd(); }
     // Standard deviation
     double stddev() const { return sqrt(m2()/(n()-1)); }
     // Sum
     double sum() const { return m_sum; }
     // Sum of squares
     double uss() const { return m_uss; }
-    // SSD
+    // SSD = sum of (x_i - mean)^2
     double ssd() const { return uss()-sum()*sum()/n(); }
     // Estimation of variance
     double variance() const { return ssd()/(n()-1); }
@@ -63,7 +61,12 @@ struct normal_sample {
 	return std::make_pair(mean() - w, mean() + w);
     }
 
-    operator double() const { return mean(); }
+    normal_sample operator+(const normal_sample & xs, const normal_sample & ys) {
+	return normal_sample(xs.n()+ys.n(), xs.sum()+ys.sum(), xs.uss()+ys.uss());
+    }
+
+    // Deprecated
+    double m2() const { return ssd(); }
 
 private:
     size_t m_n;
