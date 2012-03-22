@@ -40,10 +40,12 @@ struct normal_sample {
 
     // Number of observations
     inline size_t n() const { return m_n; }
+    // Degrees of freedom
+    inline size_t freedom() const { return n()-1; }
     // Mean of observations
     inline double mean() const { return sum()/n(); }
     // Standard deviation
-    inline double stddev() const { return sqrt(m2()/(n()-1)); }
+    inline double stddev() const { return sqrt(m2()/freedom()); }
     // Sum
     inline double sum() const { return m_sum; }
     // Sum of squares
@@ -51,11 +53,11 @@ struct normal_sample {
     // SSD = sum of (x_i - mean)^2
     inline double ssd() const { return uss()-sum()*sum()/n(); }
     // Estimation of variance
-    inline double variance() const { return ssd()/(n()-1); }
+    inline double variance() const { return ssd()/freedom(); }
 
     inline ci_t ci(double alpha = 0.05) const {
-	if (n() < 2) return std::make_pair(-1.0/0.0, 1.0/0.0);
-	boost::math::students_t dist(n() - 1);
+	if (freedom() < 2) return std::make_pair(-1.0/0.0, 1.0/0.0);
+	boost::math::students_t dist(freedom());
 	double T = quantile(complement(dist, alpha / 2));
 	double w = T * stddev() / sqrt(n());
 	return std::make_pair(mean() - w, mean() + w);
