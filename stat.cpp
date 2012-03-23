@@ -41,8 +41,15 @@ ci_t normal_sample::ci(double alpha) const {
 // Confidence interval for the variance. biogeostat p. 62
 ci_t normal_sample::ci_variance(double alpha) const {
     boost::math::chi_squared_distribution<double> dist(freedom());
-    double lhs = freedom()*variance()/quantile(dist, 1-alpha/2);
-    double rhs = freedom()*variance()/quantile(dist, alpha/2);
+    double left_quantile = quantile(dist, 1-alpha/2);
+    double right_quantile = quantile(dist, alpha/2);
+    double nominator = freedom()*variance();
+    double lhs = freedom()*variance()/left_quantile;
+    double rhs = freedom()*variance()/right_quantile;
+    std::cout << "Confidence interval for the variance:" <<
+    std::endl << "C_" << (100*(1-alpha)) << "(sigma^2) = [" << freedom() << "*" << variance() << "/" << left_quantile << "," <<
+    freedom() << "*" << variance() << "/" << right_quantile << "]" <<
+    std::endl << "= [" << lhs << ", " << rhs << "]" << std::endl;
     return std::make_pair(lhs, rhs);
 }
 
