@@ -39,11 +39,12 @@ void more_than_two_samples(vector<normal_sample> & samples) {
     cout << "p_obs = " << fixed << setprecision(2) << v.second*100 << "% => " << ((v.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
     if (v.second >= 0.05) {
 	cout << SIGMASQ" <- s"SQ" = " << setprecision(5) << v.first << "\n\n";
+	normal_sample zs = normal_sample::sum(samples.begin(), samples.end());
+	cout << "Confidence interval for the variance (biogeostat p. 104): " << zs.ci_variance() << '\n';
 	pair<double, double> m = common_mean(samples);
 	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
 	if (m.second >= 0.05) {
 	    cout << MU" <- m = " << m.first << "\n\n";
-	    normal_sample zs = normal_sample::sum(samples.begin(), samples.end());
 	    cout << "Model M" << sub(2) << ": X_ij ~ N("MU", "SIGMASQ")" << endl;
 	    cout << "Single sample data: " << zs << endl;
 	    cout << "Confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
