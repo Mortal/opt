@@ -7,18 +7,26 @@
 
 std::string long_subscript(size_t i) {
     std::stringstream ss;
+#ifndef ASCII
     while (i) {
 	ss << sub(i % 10);
     }
+#else
+    ss << i;
+#endif
     return ss.str();
 }
 
 std::string sub(std::string s) {
+#ifndef ASCII
     std::stringstream ss;
     for (size_t i = 0; i < s.size(); ++i) {
 	ss << char_subscript(s[i]);
     }
     return ss.str();
+#else
+    return '_' + s;
+#endif
 }
 
 // Confidence interval for the mean. biogeostat p. 61

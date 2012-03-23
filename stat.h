@@ -1,15 +1,25 @@
 #include <string>
 #include <cmath>
-#define SQ "\xC2\xB2"
-#define SIGMA "\xCF\x83"
+
+#ifndef ASCII
+#   define SQ "\xC2\xB2"
+#   define SIGMA "\xCF\x83"
+#   define CHI "\xCF\x87"
+#   define MU "\xCE\xBC"
+#else
+#   define SQ "^2"
+#   define SIGMA "sigma"
+#   define CHI "chi"
+#   define MU "mu"
+#endif
+
 #define SIGMASQ SIGMA SQ
-#define CHI "\xCF\x87"
 #define CHISQ CHI SQ
-#define MU "\xCE\xBC"
 
 std::string long_subscript(size_t i);
 
 inline std::string char_subscript(char c) {
+#ifndef ASCII
     char s[4] = {'\xE2', '\x82', '\x80', '\x00'};
     if (c >= '1' && c <= '9') {
 	s[2] += c-'0';
@@ -23,16 +33,22 @@ inline std::string char_subscript(char c) {
 	}
     }
     return s;
+#else
+    char s[3] = {'_', c, '\x00'};
+    return s;
+#endif
 }
 
 std::string sub(std::string s);
 
 inline std::string sub(size_t i) {
+#ifndef ASCII
     if (i <= 9) {
 	char s[4] = {'\xE2', '\x82', '\x80', '\x00'};
 	s[2] += i;
 	return s;
     }
+#endif
     return long_subscript(i);
 }
 
