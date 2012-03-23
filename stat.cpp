@@ -40,3 +40,70 @@ std::pair<double, double> common_mean(const normal_sample & first, const normal_
     double mean = (first.mean()*first.n()+second.mean()*second.n())/(first.n()+second.n());
     return std::make_pair(mean, p_obs);
 }
+
+// returns <variance, p_obs>
+std::pair<double, double> common_variance(const std::vector<normal_sample> & samples, bool loud) {
+    const size_t k = samples.size();
+    size_t f1 = 0;
+    double ssd1 = 0.0;
+    double C = 0.0;
+    double teststatsum = 0.0;
+    for (size_t i = 0; i < k; ++i) {
+	ssd1 += samples[i].ssd();
+	f1 += samples[i].freedom();
+	C += 1.0/samples[i].freedom();
+	teststatsum += log(samples[i].variance()) * samples[i].freedom();
+    }
+    C -= 1.0/f1;
+    C *= 1.0/(3*(k-1));
+    C += 1.0;
+
+    const double ss1 = ssd1 / f1;
+    const double test_statistic = f1 * log(ss1) - teststatsum;
+    const double Ba = test_statistic / C;
+
+    const double p_obs = 1-boost::math::cdf(boost::math::chi_squared(k-1), Ba);
+
+    if (loud) std::cout << "s_1^2 = SSD1 / f1 = " << ss1 << std::endl
+	   << std::endl << "-2 ln Q(x) = f_1 ln(s_1^2) - sum_{i=1}^k f_(i) ln s_(i)^2"
+	   << std::endl << "           = " << f1 << " ln(" << ss1 << ") - sum_{i=1}^" << k << " f_(i) ln s_(i)^2"
+	   << std::endl << "           = " << test_statistic << std::endl
+	   << std::endl << "C = 1 + 1/(3*(k-1))*[(sum_(i=1)^k 1/f_(i)) - 1/f1]"
+	   << std::endl << "  = 1 + 1/" << (3*k-1) << "*[(sum_(i=1)^" << k << " 1/f_(i)) - 1/" << f1 << "]"
+	   << std::endl << "  = " << C << std::endl
+	   << std::endl << "Ba = -2 ln Q(x) / C = " << Ba << std::endl
+	   << std::endl << "p_obs = 1 - F_(chi2(k-1))(Ba) = " << p_obs << std::endl << std::endl;
+
+    return std::make_pair(ss1, p_obs);
+}
+
+std::pair<double, double> common_mean(const std::vector<normal_sample> & samples, bool loud) {
+    std::pair<double, double> vartest = common_variance(samples, false);
+    const double ss1 = vartest.first;
+
+    normal_sample sum = samples[0];
+    const size_t k = samples.size();
+    for (size_t i = 1; i < k; ++i) {
+	sum = sum + samples[i];
+    }
+    double ssd2 = -(sum.sum()*sum.sum())/sum.n();
+    for (size_t i = 0; i < k; ++i) {
+	ssd2 += samples[i].sum()*samples[i].sum() / samples[i].n();
+    }
+    const double ss2 = ssd2 / (k-1);
+    const double F = ss2 / ss1;
+    //const double Q = pow(1.0/(1.0 + ssd2 / sum.ssd()), sum.n()/2.0);
+    const double p_obs = 1-boost::math::cdf(boost::math::fisher_f(k-1, sum.n()-k), F);
+
+    if (loud) 
+	std::cout << "Testing the hypothesis of a common mean in more than two samples." <<
+	std::endl << "H_0mu : mu_(1) = ... = mu_(n) = mu" << std::endl <<
+	std::endl << "SSD_2 = -S.^2/n. + sum_(i=1)^k S_i^2 / n_i = " << ssd2 <<
+	std::endl << "s_2^2 = SSD_2 / (k - 1) = " << ss2 <<
+	std::endl << "F(x) = s_2^2 / s_1^2 = " << F <<
+	//std::endl << "(p.102) Q(x) = [1/(1 + SSD_2/SSD_1)]^(n/2) = " << Q <<
+	std::endl << "p_obs(x) = 1-F_(F(k-1, n. - k))(F(x)) = " << p_obs << std::endl;
+
+    return std::make_pair(sum.mean(), p_obs);
+}
+// vim: set sw=4 sts=4 ts=8 noet:

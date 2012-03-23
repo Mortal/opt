@@ -64,6 +64,22 @@ struct normal_sample {
 	return normal_sample(n()+ys.n(), sum()+ys.sum(), uss()+ys.uss());
     }
 
+    inline normal_sample operator+=(const normal_sample & ys) {
+	m_n += ys.n();
+	m_sum += ys.sum();
+	m_uss += ys.uss();
+	return *this;
+    }
+
+    template <typename IT>
+    inline static normal_sample sum(IT begin, IT end) {
+	normal_sample result;
+	while (begin != end) {
+	    result += *begin++;
+	}
+	return result;
+    }
+
     // Deprecated
     inline double m2() const { return ssd(); }
 
@@ -83,7 +99,11 @@ inline std::pair<double,double> common_variance(const normal_sample & first, con
     return std::make_pair(var, p_obs);
 }
 
+std::pair<double, double> common_variance(const std::vector<normal_sample> & samples, bool loud = true);
+
 std::pair<double, double> common_mean(const normal_sample & first, const normal_sample & second, bool loud = true);
+
+std::pair<double, double> common_mean(const std::vector<normal_sample> & samples, bool loud = true);
 
 // typo
 typedef normal_sample normal_samples;
