@@ -40,14 +40,14 @@ void more_than_two_samples(vector<normal_sample> & samples) {
     if (v.second >= 0.05) {
 	cout << SIGMASQ" <- s"SQ" = " << setprecision(5) << v.first << "\n\n";
 	normal_sample zs = normal_sample::sum(samples.begin(), samples.end());
-	cout << "Confidence interval for the variance (biogeostat p. 104): " << zs.ci_variance() << '\n';
+	cout << "95% confidence interval for the variance (biogeostat p. 104): " << zs.ci_variance() << '\n';
 	pair<double, double> m = common_mean(samples);
 	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "Rejected" : "Not rejected") << '\n';
 	if (m.second >= 0.05) {
 	    cout << MU" <- m = " << m.first << "\n\n";
 	    cout << "Model M" << sub(2) << ": X_ij ~ N("MU", "SIGMASQ")" << endl;
-	    cout << "Single sample data: " << zs << endl;
-	    cout << "Confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
+	    cout << "Single sample data: " << setprecision(6) << zs << endl;
+	    cout << "95% confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
 	}
     }
 }
@@ -62,14 +62,14 @@ void two_samples(normal_sample & xs, normal_sample & ys) {
 	cout << "Model M" << sub(1) << ": X_ij = N("MU"_i, "SIGMASQ") for i = 1, ..., n, j = 1, ..., n_i" << endl;
 	cout << SIGMASQ" <- s"SQ" = " << setprecision(5) << v.first << "\n\n";
 	normal_samples zs = xs+ys;
-	cout << "Confidence interval for the variance (biogeostat p. 61): " << setprecision(5) << zs.ci_variance() << '\n';
+	cout << "95% confidence interval for the variance (biogeostat p. 61): " << setprecision(5) << zs.ci_variance() << '\n';
 	pair<double,double> m = common_mean(xs, ys);
 	cout << "Test of common mean:\n";
 	cout << "p_obs = " << fixed << setprecision(2) << m.second*100 << "% => " << ((m.second < 0.05) ? "REJECTED" : "NOT REJECTED") << '\n';
 	if (m.second >= 0.05) {
 	    cout << MU" <- m = " << m.first << "\n\n";
 	    cout << "Single sample data: " << zs << endl;
-	    cout << "Confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
+	    cout << "95% confidence interval for the mean (biogeostat p. 62): " << setprecision(5) << zs.ci() << '\n';
 	}
     }
 }
