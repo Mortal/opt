@@ -1,8 +1,25 @@
 #include <boost/math/distributions/students_t.hpp>
 #include <boost/math/distributions/fisher_f.hpp>
 #include <boost/math/distributions/chi_squared.hpp>
+#include <sstream>
 
 #include "stat.h"
+
+std::string long_subscript(size_t i) {
+    std::stringstream ss;
+    while (i) {
+	ss << sub(i % 10);
+    }
+    return ss.str();
+}
+
+std::string sub(std::string s) {
+    std::stringstream ss;
+    for (size_t i = 0; i < s.size(); ++i) {
+	ss << char_subscript(s[i]);
+    }
+    return ss.str();
+}
 
 // Confidence interval for the mean. biogeostat p. 61
 ci_t normal_sample::ci(double alpha) const {
@@ -64,15 +81,15 @@ std::pair<double, double> common_variance(const std::vector<normal_sample> & sam
 
     const double p_obs = 1-boost::math::cdf(boost::math::chi_squared(k-1), Ba);
 
-    if (loud) std::cout << "s_1^2 = SSD1 / f1 = " << ss1 << std::endl
-	   << std::endl << "-2 ln Q(x) = f_1 ln(s_1^2) - sum_{i=1}^k f_(i) ln s_(i)^2"
-	   << std::endl << "           = " << f1 << " ln(" << ss1 << ") - sum_{i=1}^" << k << " f_(i) ln s_(i)^2"
+    if (loud) std::cout << "s" << sub(1) << SQ" = SSD" << sub(1) << " / f" << sub(1) << " = " << ss1 << std::endl
+	   << std::endl << "-2 ln Q(x) = f" << sub(1) << " ln(s" << sub(1) << SQ") - sum_(i=1)^k f_(i) ln s_(i)"SQ
+	   << std::endl << "           = " << f1 << " ln(" << ss1 << ") - sum_(i=1)^" << k << " f_(i) ln s_(i)"SQ
 	   << std::endl << "           = " << test_statistic << std::endl
-	   << std::endl << "C = 1 + 1/(3*(k-1))*[(sum_(i=1)^k 1/f_(i)) - 1/f1]"
+	   << std::endl << "C = 1 + 1/(3*(k-1))*[(sum_(i=1)^k 1/f_(i)) - 1/f" << sub(1) << "]"
 	   << std::endl << "  = 1 + 1/" << (3*k-1) << "*[(sum_(i=1)^" << k << " 1/f_(i)) - 1/" << f1 << "]"
 	   << std::endl << "  = " << C << std::endl
 	   << std::endl << "Ba = -2 ln Q(x) / C = " << Ba << std::endl
-	   << std::endl << "p_obs = 1 - F_(chi2(k-1))(Ba) = " << p_obs << std::endl << std::endl;
+	   << std::endl << "p_obs = 1 - F_("CHISQ"(k-1))(Ba) = " << p_obs << std::endl << std::endl;
 
     return std::make_pair(ss1, p_obs);
 }
@@ -97,10 +114,10 @@ std::pair<double, double> common_mean(const std::vector<normal_sample> & samples
 
     if (loud) 
 	std::cout << "Testing the hypothesis of a common mean in more than two samples." <<
-	std::endl << "H_0mu : mu_(1) = ... = mu_(n) = mu" << std::endl <<
-	std::endl << "SSD_2 = -S.^2/n. + sum_(i=1)^k S_i^2 / n_i = " << ssd2 <<
-	std::endl << "s_2^2 = SSD_2 / (k - 1) = " << ss2 <<
-	std::endl << "F(x) = s_2^2 / s_1^2 = " << F <<
+	std::endl << "H_0"MU" : "MU << sub("(1)") << " = ... = "MU"_(n) = "MU << std::endl <<
+	std::endl << "SSD" << sub(2) << " = -S."SQ"/n. + sum_(i=1)^k S_i"SQ" / n_i = " << ssd2 <<
+	std::endl << "s" << sub(2) << SQ" = SSD" << sub(2) << " / (k - 1) = " << ss2 <<
+	std::endl << "F(x) = s" << sub(2) << SQ" / s" << sub(1) << SQ" = " << F << " ~~ F(k-1, n.-k)" <<
 	//std::endl << "(p.102) Q(x) = [1/(1 + SSD_2/SSD_1)]^(n/2) = " << Q <<
 	std::endl << "p_obs(x) = 1-F_(F(k-1, n. - k))(F(x)) = " << p_obs << std::endl;
 

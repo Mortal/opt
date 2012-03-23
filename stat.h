@@ -1,4 +1,40 @@
+#include <string>
 #include <cmath>
+#define SQ "\xC2\xB2"
+#define SIGMA "\xCF\x83"
+#define SIGMASQ SIGMA SQ
+#define CHI "\xCF\x87"
+#define CHISQ CHI SQ
+#define MU "\xCE\xBC"
+
+std::string long_subscript(size_t i);
+
+inline std::string char_subscript(char c) {
+    char s[4] = {'\xE2', '\x82', '\x80', '\x00'};
+    if (c >= '1' && c <= '9') {
+	s[2] += c-'0';
+    } else {
+	switch (c) {
+	    case '+': s[2] = '\x8A'; break;
+	    case '-': s[2] = '\x8B'; break;
+	    case '=': s[2] = '\x8C'; break;
+	    case '(': s[2] = '\x8D'; break;
+	    case ')': s[2] = '\x8E'; break;
+	}
+    }
+    return s;
+}
+
+std::string sub(std::string s);
+
+inline std::string sub(size_t i) {
+    if (i <= 9) {
+	char s[4] = {'\xE2', '\x82', '\x80', '\x00'};
+	s[2] += i;
+	return s;
+    }
+    return long_subscript(i);
+}
 
 struct ci_t {
     inline ci_t(std::pair<double, double> ci)
